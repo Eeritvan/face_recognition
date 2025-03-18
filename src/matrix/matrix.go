@@ -69,3 +69,19 @@ func Addition(A Matrix, B Matrix) (Matrix, error) {
 
 	return result, nil
 }
+
+func Transpose(A Matrix) Matrix {
+	result := Matrix{
+		Rows: A.Cols,
+		Cols: A.Rows,
+		Data: make([]int, A.Rows*A.Cols),
+	}
+
+	for n := range A.Rows {
+		for m := range A.Cols {
+			result.Data[m*A.Rows+n] = A.Data[n*A.Cols+m]
+		}
+	}
+
+	return result
+}

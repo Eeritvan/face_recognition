@@ -253,3 +253,55 @@ func TestAddition(t *testing.T) {
 		})
 	}
 }
+
+func TestTranspose(t *testing.T) {
+	tests := []struct {
+		name string
+		A    Matrix
+		want Matrix
+	}{
+		{
+			name: "output is correct with non-square matrix",
+			A: Matrix{
+				Rows: 2,
+				Cols: 3,
+				Data: []int{1, 2, 3, 4, 5, 6},
+			},
+			want: Matrix{
+				Rows: 3,
+				Cols: 2,
+				Data: []int{1, 4, 2, 5, 3, 6},
+			},
+		},
+		{
+			name: "output is correct with square matrix",
+			A: Matrix{
+				Rows: 3,
+				Cols: 3,
+				Data: []int{1, 2, 3, 4, 5, 6, 7, 8, 9},
+			},
+			want: Matrix{
+				Rows: 3,
+				Cols: 3,
+				Data: []int{1, 4, 7, 2, 5, 8, 3, 6, 9},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := Transpose(tt.A)
+			if result.Cols != tt.want.Cols {
+				t.Errorf("Transpose(): returned incorrect amount of cols")
+			}
+			if result.Rows != tt.want.Rows {
+				t.Errorf("Transpose(): returned incorrect amount of rows")
+			}
+			for i := range result.Data {
+				if i < len(tt.want.Data) && result.Data[i] != tt.want.Data[i] {
+					t.Errorf("Transpose(): at index %d, got %d, want %d", i, result.Data[i], tt.want.Data[i])
+				}
+			}
+		})
+	}
+}
