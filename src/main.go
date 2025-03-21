@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"face_recognition/image"
 	m "face_recognition/matrix"
 )
 
@@ -16,4 +17,14 @@ func main() {
 	E := m.Transpose(A)
 
 	fmt.Println(E)
+
+	matrix, err := image.LoadPgmImage()
+	if err != nil {
+		panic(err)
+	}
+
+	flattened := image.FlattenImage(*matrix)
+
+	fmt.Println(matrix)
+	fmt.Println(flattened)
 }
