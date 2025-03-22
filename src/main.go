@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 
 	"face_recognition/image"
@@ -19,10 +20,20 @@ func main() {
 		faces = append(faces, flattened)
 	}
 
-	_, err := image.MeanOfImages(faces)
+	mean, err := image.MeanOfImages(faces)
+	fmt.Println(mean)
 	if err != nil {
 		panic(err)
 	}
 
-	//fmt.Println(image)
+	diffMatrix, err := m.DifferenceMatrix(faces, mean)
+	if err != nil {
+		panic(err)
+	}
+
+	cov, err := m.Covariance(diffMatrix)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(cov)
 }

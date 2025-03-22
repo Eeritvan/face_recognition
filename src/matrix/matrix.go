@@ -85,3 +85,36 @@ func Transpose(A Matrix) Matrix {
 
 	return result
 }
+
+func DifferenceMatrix(vectors []Matrix, mean Matrix) (Matrix, error) {
+	result := Matrix{
+		Rows: vectors[0].Rows,
+		Cols: len(vectors),
+		Data: make([]float64, vectors[0].Rows*len(vectors)),
+	}
+
+	negativeMean := MultiplicationByScalar(mean, -1)
+
+	for i := range vectors {
+		diff, err := Addition(vectors[i], negativeMean)
+		if err != nil {
+			return Matrix{}, err
+		}
+		for j := range vectors[i].Rows {
+			result.Data[j*result.Cols+i] = diff.Data[j]
+		}
+	}
+
+	return result, nil
+}
+
+func Covariance(A Matrix) (Matrix, error) {
+	AT := Transpose(A)
+
+	result, err := Multiplication(AT, A)
+	if err != nil {
+		return Matrix{}, err
+	}
+
+	return result, nil
+}

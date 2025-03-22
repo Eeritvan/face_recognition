@@ -373,3 +373,104 @@ func TestTranspose(t *testing.T) {
 		})
 	}
 }
+
+func TestDifferenceMatrix(t *testing.T) {
+	tests := []struct {
+		name    string
+		vectors []Matrix
+		mean    Matrix
+		want    Matrix
+		wantErr error
+	}{
+		{
+			name: "output is correct with valid matrices",
+			vectors: []Matrix{
+				{
+					Rows: 4,
+					Cols: 1,
+					Data: []float64{1, 2, 3, 4},
+				},
+				{
+					Rows: 4,
+					Cols: 1,
+					Data: []float64{9, 7, 5, 3},
+				},
+			},
+			mean: Matrix{
+				Rows: 4,
+				Cols: 1,
+				Data: []float64{5, 4.5, 4, 3.5},
+			},
+			want: Matrix{
+				Rows: 4,
+				Cols: 2,
+				Data: []float64{-4, 4, -2.5, 2.5, -1, 1, 0.5, -0.5},
+			},
+			wantErr: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := DifferenceMatrix(tt.vectors, tt.mean)
+			if err != tt.wantErr {
+				t.Errorf("DifferenceMatrix(): returned wrong error %v, want %v", err, tt.wantErr)
+			}
+			if result.Cols != tt.want.Cols {
+				t.Errorf("DifferenceMatrix(): returned incorrect amount of cols")
+			}
+			if result.Rows != tt.want.Rows {
+				t.Errorf("DifferenceMatrix(): returned incorrect amount of rows")
+			}
+			for i := range result.Data {
+				if i < len(tt.want.Data) && math.Abs(result.Data[i]-tt.want.Data[i]) > EPSILON {
+					t.Errorf("DifferenceMatrix(): at index %d, got %f, want %f", i, result.Data[i], tt.want.Data[i])
+				}
+			}
+		})
+	}
+}
+
+func TestCovariance(t *testing.T) {
+	tests := []struct {
+		name    string
+		A       Matrix
+		want    Matrix
+		wantErr error
+	}{
+		{
+			name: "output is correct with valid matrices",
+			A: Matrix{
+				Rows: 3,
+				Cols: 2,
+				Data: []float64{1, 2, 3, 4, 5, 6},
+			},
+			want: Matrix{
+				Rows: 2,
+				Cols: 2,
+				Data: []float64{35, 44, 44, 56},
+			},
+			wantErr: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := Covariance(tt.A)
+			if err != tt.wantErr {
+				t.Errorf("Covariance(): returned wrong error %v, want %v", err, tt.wantErr)
+			}
+			if result.Cols != tt.want.Cols {
+				t.Errorf("Covariance(): returned incorrect amount of cols")
+			}
+			if result.Rows != tt.want.Rows {
+				t.Errorf("Covariance(): returned incorrect amount of rows")
+			}
+			for i := range result.Data {
+				if i < len(tt.want.Data) && math.Abs(result.Data[i]-tt.want.Data[i]) > EPSILON {
+					t.Errorf("Covariance(): at index %d, got %f, want %f", i, result.Data[i], tt.want.Data[i])
+				}
+			}
+		})
+	}
+}
