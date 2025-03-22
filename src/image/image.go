@@ -14,7 +14,7 @@ import (
 var (
 	errFileOpening   = fmt.Errorf("error opening file")
 	errFileReading   = fmt.Errorf("error reading file")
-	errWrongFaceSize = fmt.Errorf("Size of the face was incorrect")
+	errWrongFaceSize = fmt.Errorf("size of the face was incorrect")
 )
 
 func LoadPgmImage(filepath string) (*m.Matrix, error) {
