@@ -1,11 +1,14 @@
 package matrix
 
 import (
+	"math"
 	"testing"
 )
 
-func createBigMatrix(rows int, cols int, value int) Matrix {
-	data := make([]int, rows*cols)
+const EPSILON = 1e-10
+
+func createBigMatrix(rows int, cols int, value float64) Matrix {
+	data := make([]float64, rows*cols)
 	for i := range data {
 		data[i] = value
 	}
@@ -20,7 +23,7 @@ func TestMultiplicationByScalar(t *testing.T) {
 	tests := []struct {
 		name   string
 		A      Matrix
-		scalar int
+		scalar float64
 		want   Matrix
 	}{
 		{
@@ -28,13 +31,13 @@ func TestMultiplicationByScalar(t *testing.T) {
 			A: Matrix{
 				Rows: 2,
 				Cols: 3,
-				Data: []int{1, 2, 3, 4, 5, 6},
+				Data: []float64{1, 2, 3, 4, 5, 6},
 			},
 			scalar: 3,
 			want: Matrix{
 				Rows: 2,
 				Cols: 3,
-				Data: []int{3, 6, 9, 12, 15, 18},
+				Data: []float64{3, 6, 9, 12, 15, 18},
 			},
 		},
 		{
@@ -42,13 +45,13 @@ func TestMultiplicationByScalar(t *testing.T) {
 			A: Matrix{
 				Rows: 2,
 				Cols: 3,
-				Data: []int{1, 2, 3, 4, 5, 6},
+				Data: []float64{1, 2, 3, 4, 5, 6},
 			},
 			scalar: -2,
 			want: Matrix{
 				Rows: 2,
 				Cols: 3,
-				Data: []int{-2, -4, -6, -8, -10, -12},
+				Data: []float64{-2, -4, -6, -8, -10, -12},
 			},
 		},
 		{
@@ -56,13 +59,13 @@ func TestMultiplicationByScalar(t *testing.T) {
 			A: Matrix{
 				Rows: 2,
 				Cols: 3,
-				Data: []int{1, 2, 3, 4, 5, 6},
+				Data: []float64{1, 2, 3, 4, 5, 6},
 			},
 			scalar: 0,
 			want: Matrix{
 				Rows: 2,
 				Cols: 3,
-				Data: []int{0, 0, 0, 0, 0, 0},
+				Data: []float64{0, 0, 0, 0, 0, 0},
 			},
 		},
 		{
@@ -70,6 +73,20 @@ func TestMultiplicationByScalar(t *testing.T) {
 			A:      createBigMatrix(92, 112, 2),
 			scalar: 4,
 			want:   createBigMatrix(92, 112, 8),
+		},
+		{
+			name: "Works with floating point numbers",
+			A: Matrix{
+				Rows: 2,
+				Cols: 3,
+				Data: []float64{2.5, 2, 3, 1.25, 0, 10},
+			},
+			scalar: float64(2.5),
+			want: Matrix{
+				Rows: 2,
+				Cols: 3,
+				Data: []float64{6.25, 5, 7.5, 3.125, 0, 25},
+			},
 		},
 	}
 
@@ -83,8 +100,8 @@ func TestMultiplicationByScalar(t *testing.T) {
 				t.Errorf("MultiplicationByScalar(): returned incorrect amount of rows")
 			}
 			for i := range result.Data {
-				if i < len(tt.want.Data) && result.Data[i] != tt.want.Data[i] {
-					t.Errorf("MultiplicationByScalar(): at index %d, got %d, want %d", i, result.Data[i], tt.want.Data[i])
+				if i < len(tt.want.Data) && math.Abs(result.Data[i]-tt.want.Data[i]) > EPSILON {
+					t.Errorf("MultiplicationByScalar(): at index %d, got %f, want %f", i, result.Data[i], tt.want.Data[i])
 				}
 			}
 		})
@@ -104,17 +121,17 @@ func TestMultiplication(t *testing.T) {
 			A: Matrix{
 				Rows: 3,
 				Cols: 2,
-				Data: []int{2, 4, 1, 2, 3, 5},
+				Data: []float64{2, 4, 1, 2, 3, 5},
 			},
 			B: Matrix{
 				Rows: 2,
 				Cols: 4,
-				Data: []int{2, 0, 1, 3, 0, 7, 8, 1},
+				Data: []float64{2, 0, 1, 3, 0, 7, 8, 1},
 			},
 			want: Matrix{
 				Rows: 3,
 				Cols: 4,
-				Data: []int{4, 28, 34, 10, 2, 14, 17, 5, 6, 35, 43, 14},
+				Data: []float64{4, 28, 34, 10, 2, 14, 17, 5, 6, 35, 43, 14},
 			},
 			wantErr: nil,
 		},
@@ -123,15 +140,34 @@ func TestMultiplication(t *testing.T) {
 			A: Matrix{
 				Rows: 3,
 				Cols: 2,
-				Data: []int{2, 4, 1, 2, 3, 5},
+				Data: []float64{2, 4, 1, 2, 3, 5},
 			},
 			B: Matrix{
 				Rows: 3,
 				Cols: 2,
-				Data: []int{2, 4, 1, 2, 3, 5},
+				Data: []float64{2, 4, 1, 2, 3, 5},
 			},
 			want:    Matrix{},
 			wantErr: errIncorrectSize,
+		},
+		{
+			name: "Output is correct with floating point matrices",
+			A: Matrix{
+				Rows: 3,
+				Cols: 2,
+				Data: []float64{2.5, 4.1, 0.8, 0.5, 2, 0.5},
+			},
+			B: Matrix{
+				Rows: 2,
+				Cols: 4,
+				Data: []float64{2.5, 0, 0.1, 3, 0, 0.7, 8, 1},
+			},
+			want: Matrix{
+				Rows: 3,
+				Cols: 4,
+				Data: []float64{6.25, 2.87, 33.05, 11.6, 2, 0.35, 4.08, 2.9, 5, 0.35, 4.2, 6.5},
+			},
+			wantErr: nil,
 		},
 		{
 			name:    "algoritm works with 'big' matrices",
@@ -145,17 +181,17 @@ func TestMultiplication(t *testing.T) {
 			A: Matrix{
 				Rows: 3,
 				Cols: 2,
-				Data: []int{2, 4, 1, 2, 3, 5},
+				Data: []float64{2, 4, 1, 2, 3, 5},
 			},
 			B: Matrix{
 				Rows: 2,
 				Cols: 2,
-				Data: []int{0, 0, 0, 0},
+				Data: []float64{0, 0, 0, 0},
 			},
 			want: Matrix{
 				Rows: 3,
 				Cols: 2,
-				Data: []int{0, 0, 0, 0, 0, 0},
+				Data: []float64{0, 0, 0, 0, 0, 0},
 			},
 			wantErr: nil,
 		},
@@ -174,8 +210,8 @@ func TestMultiplication(t *testing.T) {
 				t.Errorf("Multiplication(): returned incorrect amount of rows")
 			}
 			for i := range result.Data {
-				if i < len(tt.want.Data) && result.Data[i] != tt.want.Data[i] {
-					t.Errorf("Multiplication(): at index %d, got %d, want %d", i, result.Data[i], tt.want.Data[i])
+				if i < len(tt.want.Data) && math.Abs(result.Data[i]-tt.want.Data[i]) > EPSILON {
+					t.Errorf("Multiplication(): at index %d, got %f, want %f", i, result.Data[i], tt.want.Data[i])
 				}
 			}
 		})
@@ -195,17 +231,17 @@ func TestAddition(t *testing.T) {
 			A: Matrix{
 				Rows: 2,
 				Cols: 2,
-				Data: []int{1, 2, 3, 4},
+				Data: []float64{1, 2, 3, 4},
 			},
 			B: Matrix{
 				Rows: 2,
 				Cols: 2,
-				Data: []int{1, 2, 3, 4},
+				Data: []float64{1, 2, 3, 4},
 			},
 			want: Matrix{
 				Rows: 2,
 				Cols: 2,
-				Data: []int{2, 4, 6, 8},
+				Data: []float64{2, 4, 6, 8},
 			},
 			wantErr: nil,
 		},
@@ -214,15 +250,34 @@ func TestAddition(t *testing.T) {
 			A: Matrix{
 				Rows: 2,
 				Cols: 2,
-				Data: []int{1, 2, 3, 4},
+				Data: []float64{1, 2, 3, 4},
 			},
 			B: Matrix{
 				Rows: 3,
 				Cols: 2,
-				Data: []int{1, 2, 3, 4, 5, 6},
+				Data: []float64{1, 2, 3, 4, 5, 6},
 			},
 			want:    Matrix{},
 			wantErr: errIncorrectSize,
+		},
+		{
+			name: "output is correct with floating point matrices",
+			A: Matrix{
+				Rows: 2,
+				Cols: 2,
+				Data: []float64{1.5, 2.1, 3.68, 0.123},
+			},
+			B: Matrix{
+				Rows: 2,
+				Cols: 2,
+				Data: []float64{0.5, 2.99, -0.321, 0},
+			},
+			want: Matrix{
+				Rows: 2,
+				Cols: 2,
+				Data: []float64{2, 5.09, 3.359, 0.123},
+			},
+			wantErr: nil,
 		},
 		{
 			name:    "algoritm works with 'big' matrices",
@@ -246,8 +301,8 @@ func TestAddition(t *testing.T) {
 				t.Errorf("Addition(): returned incorrect amount of rows")
 			}
 			for i := range result.Data {
-				if i < len(tt.want.Data) && result.Data[i] != tt.want.Data[i] {
-					t.Errorf("Multiplication(): at index %d, got %d, want %d", i, result.Data[i], tt.want.Data[i])
+				if i < len(tt.want.Data) && math.Abs(result.Data[i]-tt.want.Data[i]) > EPSILON {
+					t.Errorf("Multiplication(): at index %d, got %f, want %f", i, result.Data[i], tt.want.Data[i])
 				}
 			}
 		})
@@ -265,12 +320,12 @@ func TestTranspose(t *testing.T) {
 			A: Matrix{
 				Rows: 2,
 				Cols: 3,
-				Data: []int{1, 2, 3, 4, 5, 6},
+				Data: []float64{1, 2, 3, 4, 5, 6},
 			},
 			want: Matrix{
 				Rows: 3,
 				Cols: 2,
-				Data: []int{1, 4, 2, 5, 3, 6},
+				Data: []float64{1, 4, 2, 5, 3, 6},
 			},
 		},
 		{
@@ -278,12 +333,25 @@ func TestTranspose(t *testing.T) {
 			A: Matrix{
 				Rows: 3,
 				Cols: 3,
-				Data: []int{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				Data: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
 			},
 			want: Matrix{
 				Rows: 3,
 				Cols: 3,
-				Data: []int{1, 4, 7, 2, 5, 8, 3, 6, 9},
+				Data: []float64{1, 4, 7, 2, 5, 8, 3, 6, 9},
+			},
+		},
+		{
+			name: "output is correct with floating point matrix",
+			A: Matrix{
+				Rows: 2,
+				Cols: 3,
+				Data: []float64{0.123, 2.7, 3, 0, 5.99, -0.6},
+			},
+			want: Matrix{
+				Rows: 3,
+				Cols: 2,
+				Data: []float64{0.123, 0, 2.7, 5.99, 3, -0.6},
 			},
 		},
 	}
@@ -298,8 +366,8 @@ func TestTranspose(t *testing.T) {
 				t.Errorf("Transpose(): returned incorrect amount of rows")
 			}
 			for i := range result.Data {
-				if i < len(tt.want.Data) && result.Data[i] != tt.want.Data[i] {
-					t.Errorf("Transpose(): at index %d, got %d, want %d", i, result.Data[i], tt.want.Data[i])
+				if i < len(tt.want.Data) && math.Abs(result.Data[i]-tt.want.Data[i]) > EPSILON {
+					t.Errorf("Transpose(): at index %d, got %f, want %f", i, result.Data[i], tt.want.Data[i])
 				}
 			}
 		})
