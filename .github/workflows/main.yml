@@ -26,7 +26,7 @@ jobs:
       run: go mod download
 
     - name: Run Unit Tests
-      run: go test -covermode=atomic -coverprofile=coverage.out ./...
+      run: go test -covermode=atomic -coverprofile=coverage.txt ./...
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
