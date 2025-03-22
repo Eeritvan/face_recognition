@@ -122,6 +122,23 @@ func TestMeanOfImages(t *testing.T) {
 			},
 			wantErr: nil,
 		},
+		{
+			name: "One of the matrices has incorrect size",
+			faces: []m.Matrix{
+				{
+					Rows: 3,
+					Cols: 3,
+					Data: []float64{2, 3, 1, 2, 4, 0, 0, 0, 5},
+				},
+				{
+					Rows: 3,
+					Cols: 2,
+					Data: []float64{7, 3, 5, 2, 1, 3},
+				},
+			},
+			want:    m.Matrix{},
+			wantErr: errWrongFaceSize,
+		},
 	}
 
 	for _, tt := range tests {

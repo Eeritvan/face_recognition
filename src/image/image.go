@@ -12,8 +12,9 @@ import (
 )
 
 var (
-	errFileOpening = fmt.Errorf("error opening file")
-	errFileReading = fmt.Errorf("error reading file")
+	errFileOpening   = fmt.Errorf("error opening file")
+	errFileReading   = fmt.Errorf("error reading file")
+	errWrongFaceSize = fmt.Errorf("Size of the face was incorrect")
 )
 
 func LoadPgmImage(filepath string) (*m.Matrix, error) {
@@ -91,10 +92,15 @@ func MeanOfImages(faces []m.Matrix) (m.Matrix, error) {
 	}
 
 	for _, face := range faces {
+		if face.Cols != result.Cols || face.Rows != result.Rows {
+			return m.Matrix{}, errWrongFaceSize
+		}
+
 		sum, err := m.Addition(result, face)
 		if err != nil {
 			return m.Matrix{}, err
 		}
+
 		result = sum
 	}
 
