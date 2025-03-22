@@ -2,29 +2,28 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 
 	"face_recognition/image"
 	m "face_recognition/matrix"
 )
 
 func main() {
-	A := m.Matrix{
-		Rows: 3,
-		Cols: 2,
-		Data: []int{4, 2, 3, 2, 5, 9},
+	var faces []m.Matrix
+
+	for i := range 10 {
+		matrix, err := image.LoadPgmImage("data/s1/" + strconv.Itoa(i+1) + ".pgm")
+		if err != nil {
+			panic(err)
+		}
+		flattened := image.FlattenImage(*matrix)
+		faces = append(faces, flattened)
 	}
 
-	E := m.Transpose(A)
-
-	fmt.Println(E)
-
-	matrix, err := image.LoadPgmImage()
+	image, err := image.MeanOfImages(faces)
 	if err != nil {
 		panic(err)
 	}
 
-	flattened := image.FlattenImage(*matrix)
-
-	fmt.Println(matrix)
-	fmt.Println(flattened)
+	fmt.Println(image)
 }

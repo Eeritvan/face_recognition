@@ -5,18 +5,18 @@ import "fmt"
 type Matrix struct {
 	Rows int
 	Cols int
-	Data []int
+	Data []float64
 }
 
 var (
 	errIncorrectSize = fmt.Errorf("incorrect size")
 )
 
-func MultiplicationByScalar(A Matrix, scalar int) Matrix {
+func MultiplicationByScalar(A Matrix, scalar float64) Matrix {
 	result := Matrix{
 		Rows: A.Rows,
 		Cols: A.Cols,
-		Data: make([]int, A.Rows*A.Cols),
+		Data: make([]float64, A.Rows*A.Cols),
 	}
 
 	for i, num := range A.Data {
@@ -34,14 +34,14 @@ func Multiplication(A Matrix, B Matrix) (Matrix, error) {
 	result := Matrix{
 		Rows: A.Rows,
 		Cols: B.Cols,
-		Data: make([]int, A.Rows*B.Cols),
+		Data: make([]float64, A.Rows*B.Cols),
 	}
 
 	for n := range A.Rows {
 		rowOffset := n * A.Cols
 		resultRowOffset := n * B.Cols
 		for m := range B.Cols {
-			sum := 0
+			var sum float64 = 0
 			for k := range A.Cols {
 				sum += A.Data[rowOffset+k] * B.Data[k*B.Cols+m]
 			}
@@ -60,7 +60,7 @@ func Addition(A Matrix, B Matrix) (Matrix, error) {
 	result := Matrix{
 		Rows: A.Rows,
 		Cols: A.Cols,
-		Data: make([]int, A.Rows*A.Cols),
+		Data: make([]float64, A.Rows*A.Cols),
 	}
 
 	for n := range A.Data {
@@ -74,7 +74,7 @@ func Transpose(A Matrix) Matrix {
 	result := Matrix{
 		Rows: A.Cols,
 		Cols: A.Rows,
-		Data: make([]int, A.Rows*A.Cols),
+		Data: make([]float64, A.Rows*A.Cols),
 	}
 
 	for n := range A.Rows {

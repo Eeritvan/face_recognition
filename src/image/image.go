@@ -16,8 +16,8 @@ var (
 	errFileReading = fmt.Errorf("error reading file")
 )
 
-func LoadPgmImage() (*m.Matrix, error) {
-	file, err := os.Open("data/s1/3.pgm")
+func LoadPgmImage(filepath string) (*m.Matrix, error) {
+	file, err := os.Open(filepath)
 	if err != nil {
 		return nil, errFileOpening
 	}
@@ -54,7 +54,7 @@ func LoadPgmImage() (*m.Matrix, error) {
 	matrix := &m.Matrix{
 		Rows: height,
 		Cols: width,
-		Data: make([]int, width*height),
+		Data: make([]float64, width*height),
 	}
 
 	rawData := make([]byte, width*height)
@@ -67,7 +67,7 @@ func LoadPgmImage() (*m.Matrix, error) {
 	}
 
 	for i := range rawData {
-		matrix.Data[i] = int(rawData[i])
+		matrix.Data[i] = float64(rawData[i])
 	}
 
 	return matrix, nil
@@ -81,4 +81,24 @@ func FlattenImage(img m.Matrix) m.Matrix {
 	}
 
 	return result
+}
+
+func MeanOfImages(faces []m.Matrix) (m.Matrix, error) {
+	result := m.Matrix{
+		Rows: faces[0].Rows,
+		Cols: faces[0].Cols,
+		Data: make([]float64, faces[0].Rows*faces[0].Cols),
+	}
+
+	for _, face := range faces {
+		sum, err := m.Addition(result, face)
+		if err != nil {
+			return m.Matrix{}, err
+		}
+		result = sum
+	}
+
+	result = m.MultiplicationByScalar(result, 1/float64(len(faces)))
+
+	return result, nil
 }
