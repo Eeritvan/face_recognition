@@ -20,3 +20,4 @@ https://en.wikipedia.org/wiki/Eigenvalue_algorithm
 https://km.pcz.pl/konferencja/dokumenty/MMFT2017/Caban%20L.pdf
 https://www.geeksforgeeks.org/ml-face-recognition-using-eigenfaces-pca-algorithm/
 https://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html
+https://www.youtube.com/watch?v=n0zDgkbFyQk

@@ -1,9 +1,10 @@
 package main
 
 import (
+	"face_recognition/qr"
 	"fmt"
-	// "strconv"
 
+	// "strconv"
 	// "face_recognition/image"
 	m "face_recognition/matrix"
 )
@@ -35,9 +36,45 @@ func main() {
 	// if err != nil {
 	// 	panic(err)
 	// }
-	// fmt.Println(cov)
+	// // fmt.Println(cov)
 
-	A := m.Identity(4)
+	// A, B, err := qr.Householder(cov)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	fmt.Println(A)
+	// B, err := m.Householder(A)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// M := m.Matrix{
+	// 	Rows: 3,
+	// 	Cols: 3,
+	// 	Data: []float64{4, 2, 2, 3, 3, 1, 0, 5, 4},
+	// }
+
+	M := m.Matrix{
+		Rows: 3,
+		Cols: 3,
+		Data: []float64{2, 0, 0, 0, 4, 5, 0, 4, 3},
+	}
+
+	Q, _ := qr.QR_algorithm(M)
+
+	fmt.Println(Q)
+
+	// fmt.Println("OG", M)
+	// fmt.Println("Q ", Q)
+	// fmt.Println("R ", R)
+
+	// fmt.Println()
+
+	// Mult, _ := m.Multiplication(Q, R)
+	// fmt.Println("RE", Mult)
+
+	// fmt.Println()
+
+	// fmt.Println(m.Multiplication(Q, m.Transpose(Q)))
+	// fmt.Println(m.Multiplication(m.Transpose(Q), Q))
 }

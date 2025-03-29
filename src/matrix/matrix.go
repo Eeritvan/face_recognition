@@ -1,6 +1,8 @@
 package matrix
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Matrix struct {
 	Rows int
