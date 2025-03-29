@@ -374,6 +374,50 @@ func TestTranspose(t *testing.T) {
 	}
 }
 
+func TestIdentity(t *testing.T) {
+	tests := []struct {
+		name string
+		n    int
+		want Matrix
+	}{
+		{
+			name: "Output is corrent with 3x3 matrix",
+			n:    3,
+			want: Matrix{
+				Rows: 3,
+				Cols: 3,
+				Data: []float64{1, 0, 0, 0, 1, 0, 0, 0, 1},
+			},
+		},
+		{
+			name: "Output is corrent with n=0",
+			n:    0,
+			want: Matrix{
+				Rows: 0,
+				Cols: 0,
+				Data: []float64{},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := Identity(tt.n)
+			if result.Cols != tt.want.Cols {
+				t.Errorf("Identity(): returned incorrect amount of cols")
+			}
+			if result.Rows != tt.want.Rows {
+				t.Errorf("Identity(): returned incorrect amount of rows")
+			}
+			for i := range result.Data {
+				if i < len(tt.want.Data) && result.Data[i] != tt.want.Data[i] {
+					t.Errorf("Identity(): at index %d, got %f, want %f", i, result.Data[i], tt.want.Data[i])
+				}
+			}
+		})
+	}
+}
+
 func TestDifferenceMatrix(t *testing.T) {
 	tests := []struct {
 		name    string

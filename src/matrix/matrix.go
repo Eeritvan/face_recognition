@@ -86,6 +86,20 @@ func Transpose(A Matrix) Matrix {
 	return result
 }
 
+func Identity(n int) Matrix {
+	result := Matrix{
+		Rows: n,
+		Cols: n,
+		Data: make([]float64, n*n),
+	}
+
+	for i := range n {
+		result.Data[i*n+i] = 1
+	}
+
+	return result
+}
+
 func DifferenceMatrix(vectors []Matrix, mean Matrix) (Matrix, error) {
 	result := Matrix{
 		Rows: vectors[0].Rows,
