@@ -2,6 +2,7 @@ package qr
 
 import (
 	m "face_recognition/matrix"
+	"fmt"
 	"math"
 )
 
@@ -82,32 +83,47 @@ func QR_Householder(A m.Matrix) (m.Matrix, m.Matrix, error) {
 }
 
 // https://www.youtube.com/watch?v=McHW221J3UM
-func QR_algorithm(A m.Matrix) (m.Matrix, error) {
+func QR_algorithm(A m.Matrix) ([]float64, m.Matrix, error) {
 	Ak := m.Matrix{
 		Rows: A.Rows,
 		Cols: A.Cols,
 		Data: append([]float64(nil), A.Data...),
 	}
 
+	V := m.Identity(A.Rows)
+
 	for range 50 {
 		Q, R, err := QR_Householder(Ak)
 		if err != nil {
-			return m.Matrix{}, err
+			return nil, m.Matrix{}, err
 		}
 
 		newAk, err := m.Multiplication(R, Q)
 		if err != nil {
-			return m.Matrix{}, err
+			return nil, m.Matrix{}, err
 		}
 
+		// Update V by multiplying with Q
+		newV, err := m.Multiplication(V, Q)
+		if err != nil {
+			return nil, m.Matrix{}, err
+		}
+		V = newV
+
 		if hasConverged(Ak, newAk) {
-			return newAk, nil
+			n := A.Rows
+			eigenValues := make([]float64, n)
+			for i := range n {
+				eigenValues[i] = newAk.Data[i*newAk.Cols+i]
+			}
+			return eigenValues, V, nil
 		}
 
 		Ak = newAk
 	}
 
-	return Ak, nil
+	// todo better error message here
+	return nil, m.Matrix{}, fmt.Errorf("something went wrong")
 }
 
 func hasConverged(prev, curr m.Matrix) bool {

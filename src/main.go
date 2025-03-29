@@ -60,9 +60,16 @@ func main() {
 		Data: []float64{2, 0, 0, 0, 4, 5, 0, 4, 3},
 	}
 
-	Q, _ := qr.QR_algorithm(M)
+	eigenValues, Q, _ := qr.QR_algorithm(M)
 
-	fmt.Println(Q)
+	// fmt.Println(eigenValues, Q)
+
+	sortedValues, sortedVectors := m.SortEigenvectors(eigenValues, Q)
+
+	fmt.Println(sortedValues)
+	fmt.Println(sortedVectors)
+
+	// fmt.Println(Q)
 
 	// fmt.Println("OG", M)
 	// fmt.Println("Q ", Q)

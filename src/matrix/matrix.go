@@ -134,3 +134,8 @@ func Covariance(A Matrix) (Matrix, error) {
 
 	return result, nil
 }
+
+// todo: tests
+func SortEigenvectors(eigenvalues []float64, eigenvectors Matrix) ([]float64, Matrix) {
+
+}
