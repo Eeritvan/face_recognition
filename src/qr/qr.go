@@ -6,17 +6,23 @@ import (
 	"math"
 )
 
-func householderVector(R m.Matrix, k, n int) []float64 {
-	v := make([]float64, n-k)
+// var (
+// 	errIncorrectSize = fmt.Errorf("incorrect size")
+// )
+
+func householderVector(R m.Matrix, col, n int) []float64 {
+	v := make([]float64, n-col)
 	alpha := 0.0
-	for i := k; i < n; i++ {
-		v[i-k] = R.Data[i*n+k]
-		alpha += R.Data[i*n+k] * R.Data[i*n+k]
+	for i := col; i < n; i++ {
+		v[i-col] = R.Data[i*n+col]
+		alpha += R.Data[i*n+col] * R.Data[i*n+col]
 	}
+
 	alpha = math.Sqrt(alpha)
 	if v[0] > 0 {
 		alpha = -alpha
 	}
+
 	v[0] = v[0] + alpha
 	return v
 }
@@ -41,7 +47,7 @@ func normalizeVector(v []float64, n int) []float64 {
 	return u
 }
 
-func householderMatrix(u []float64, k, n int) m.Matrix {
+func HouseholderMatrix(u []float64, k, n int) m.Matrix {
 	Hk := m.Identity(n)
 	for i := k; i < n; i++ {
 		for j := k; j < n; j++ {
@@ -52,6 +58,7 @@ func householderMatrix(u []float64, k, n int) m.Matrix {
 }
 
 // https://www.youtube.com/watch?v=n0zDgkbFyQk
+// todo: errors
 func QR_Householder(A m.Matrix) (m.Matrix, m.Matrix, error) {
 	n := A.Rows
 
@@ -61,10 +68,10 @@ func QR_Householder(A m.Matrix) (m.Matrix, m.Matrix, error) {
 		Cols: A.Cols,
 		Data: append([]float64(nil), A.Data...),
 	}
-	for k := range n - 1 {
-		v := householderVector(R, k, n)
+	for currCol := range n - 1 {
+		v := householderVector(R, currCol, n)
 		u := normalizeVector(v, n)
-		Hk := householderMatrix(u, k, n)
+		Hk := HouseholderMatrix(u, currCol, n)
 
 		newR, err := m.Multiplication(Hk, R)
 		if err != nil {
@@ -83,6 +90,7 @@ func QR_Householder(A m.Matrix) (m.Matrix, m.Matrix, error) {
 }
 
 // https://www.youtube.com/watch?v=McHW221J3UM
+// todo: errors
 func QR_algorithm(A m.Matrix) ([]float64, m.Matrix, error) {
 	Ak := m.Matrix{
 		Rows: A.Rows,
@@ -110,7 +118,7 @@ func QR_algorithm(A m.Matrix) ([]float64, m.Matrix, error) {
 		}
 		V = newV
 
-		if hasConverged(Ak, newAk) {
+		if HasConverged(Ak, newAk) {
 			n := A.Rows
 			eigenValues := make([]float64, n)
 			for i := range n {
@@ -122,11 +130,10 @@ func QR_algorithm(A m.Matrix) ([]float64, m.Matrix, error) {
 		Ak = newAk
 	}
 
-	// todo better error message here
 	return nil, m.Matrix{}, fmt.Errorf("something went wrong")
 }
 
-func hasConverged(prev, curr m.Matrix) bool {
+func HasConverged(prev, curr m.Matrix) bool {
 	tol := 10e-10
 	for i := range prev.Rows {
 		if math.Abs(prev.Data[i*prev.Cols+i]-curr.Data[i*curr.Cols+i]) > tol {
