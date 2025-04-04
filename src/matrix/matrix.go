@@ -136,6 +136,35 @@ func Covariance(A Matrix) (Matrix, error) {
 }
 
 // todo: tests
+// todo: explore possibility for faster sorting. Just relatively simple solution for now.
 func SortEigenvectors(eigenvalues []float64, eigenvectors Matrix) ([]float64, Matrix) {
-	return nil, Matrix{}
+	indices := make([]int, len(eigenvalues))
+	for i := range indices {
+		indices[i] = i
+	}
+
+	for i := range len(indices) - 1 {
+		for j := i + 1; j < len(indices); j++ {
+			if eigenvalues[indices[i]] < eigenvalues[indices[j]] {
+				indices[i], indices[j] = indices[j], indices[i]
+				// eigenvalues[i], eigenvalues[j] = eigenvalues[j], eigenvalues[i]
+			}
+		}
+	}
+
+	sortedValues := make([]float64, len(eigenvalues))
+	result := Matrix{
+		Rows: eigenvectors.Rows,
+		Cols: eigenvectors.Cols,
+		Data: make([]float64, len(eigenvectors.Data)),
+	}
+
+	for value, idx := range indices {
+		sortedValues[value] = eigenvalues[idx]
+		for j := range eigenvectors.Rows {
+			result.Data[j*eigenvectors.Cols+value] = eigenvectors.Data[j*eigenvectors.Cols+idx]
+		}
+	}
+
+	return sortedValues, result
 }

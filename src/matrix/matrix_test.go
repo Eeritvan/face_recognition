@@ -1,6 +1,7 @@
 package matrix
 
 import (
+	"fmt"
 	"math"
 	"testing"
 )
@@ -209,6 +210,7 @@ func TestMultiplication(t *testing.T) {
 			if result.Rows != tt.want.Rows {
 				t.Errorf("Multiplication(): returned incorrect amount of rows")
 			}
+
 			for i := range result.Data {
 				if i < len(tt.want.Data) && math.Abs(result.Data[i]-tt.want.Data[i]) > EPSILON {
 					t.Errorf("Multiplication(): at index %d, got %f, want %f", i, result.Data[i], tt.want.Data[i])
@@ -515,6 +517,75 @@ func TestCovariance(t *testing.T) {
 					t.Errorf("Covariance(): at index %d, got %f, want %f", i, result.Data[i], tt.want.Data[i])
 				}
 			}
+		})
+	}
+}
+
+func TestSortEigenvectors(t *testing.T) {
+	tests := []struct {
+		name        string
+		values      []float64
+		vectors     Matrix
+		wantValues  []float64
+		wantVectors Matrix
+	}{
+		{
+			name:   "output is correct with integers",
+			values: []float64{4, 1, 10},
+			vectors: Matrix{
+				Rows: 3,
+				Cols: 3,
+				Data: []float64{1, 2, 0, 2, 4, 0, 1, 2, 3},
+			},
+			wantValues: []float64{10, 4, 1},
+			wantVectors: Matrix{
+				Rows: 3,
+				Cols: 3,
+				Data: []float64{0, 1, 2, 0, 2, 4, 3, 1, 2},
+			},
+		},
+		{
+			name:   "output is correct with floating point numbers",
+			values: []float64{2, 4, 8, 1},
+			vectors: Matrix{
+				Rows: 4,
+				Cols: 4,
+				Data: []float64{1, 0.5, 0.25, 0.10, 0.2, 2, 8, 0, 0.1, 0.99, 1.01, 1, 0, 1, 10.1, 9.9999},
+			},
+			wantValues: []float64{8, 4, 2, 1},
+			wantVectors: Matrix{
+				Rows: 4,
+				Cols: 4,
+				Data: []float64{0.25, 0.5, 1, 0.10, 8, 2, 0.2, 0, 1.01, 0.99, 0.1, 1, 10.1, 1, 0, 9.9999},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			sortedValues, sortedVectors := SortEigenvectors(tt.values, tt.vectors)
+			for i := range sortedValues {
+				if i < len(tt.values) && math.Abs(sortedValues[i]-tt.wantValues[i]) > EPSILON {
+					t.Errorf("SortEigenvectors(): at index %d, got %f, want %f", i, sortedValues[i], tt.values[i])
+				}
+			}
+
+			if sortedVectors.Rows != tt.wantVectors.Rows {
+				t.Errorf("SortEigenvectors(): returned incorrect amount of rows")
+			}
+
+			if sortedVectors.Cols != tt.wantVectors.Cols {
+				t.Errorf("SortEigenvectors(): returned incorrect amount of cols")
+			}
+
+			for i := range sortedVectors.Data {
+				if i < len(tt.wantVectors.Data) && math.Abs(sortedVectors.Data[i]-tt.wantVectors.Data[i]) > EPSILON {
+					t.Errorf("wanted: %v, got: %v", tt.wantVectors, sortedVectors)
+				}
+			}
+
+			fmt.Println(sortedValues)
+			fmt.Println(sortedVectors)
 		})
 	}
 }

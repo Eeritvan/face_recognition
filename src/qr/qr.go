@@ -58,7 +58,7 @@ func HouseholderMatrix(u []float64, k, n int) m.Matrix {
 }
 
 // https://www.youtube.com/watch?v=n0zDgkbFyQk
-// todo: errors
+// todo: errors, tests
 func QR_Householder(A m.Matrix) (m.Matrix, m.Matrix, error) {
 	n := A.Rows
 
@@ -90,7 +90,7 @@ func QR_Householder(A m.Matrix) (m.Matrix, m.Matrix, error) {
 }
 
 // https://www.youtube.com/watch?v=McHW221J3UM
-// todo: errors
+// todo: errors, tests
 func QR_algorithm(A m.Matrix) ([]float64, m.Matrix, error) {
 	Ak := m.Matrix{
 		Rows: A.Rows,
@@ -134,7 +134,7 @@ func QR_algorithm(A m.Matrix) ([]float64, m.Matrix, error) {
 }
 
 func HasConverged(prev, curr m.Matrix) bool {
-	tol := 10e-10
+	tol := 10e-8
 	for i := range prev.Rows {
 		if math.Abs(prev.Data[i*prev.Cols+i]-curr.Data[i*curr.Cols+i]) > tol {
 			return false
