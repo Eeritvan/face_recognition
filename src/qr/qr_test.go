@@ -182,7 +182,7 @@ func TestHouseholderMatrix(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := HouseholderMatrix(tt.u, tt.k, tt.n)
+			result := householderMatrix(tt.u, tt.k, tt.n)
 			if result.Cols != tt.want.Cols {
 				t.Errorf("householderMatrix(): returned incorrect amount of cols")
 			}
@@ -239,7 +239,7 @@ func TestQR_Householder(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Q, R, err := QR_Householder(tt.A)
+			Q, R, err := qr_Householder(tt.A)
 
 			if err != tt.wantErr {
 				t.Errorf("%v", err)
@@ -247,27 +247,27 @@ func TestQR_Householder(t *testing.T) {
 
 			// checking Q
 			if Q.Rows != tt.wantQ.Rows {
-				t.Errorf("QR_Householder(): Q returned incorrect amount of rows")
+				t.Errorf("qr_Householder(): Q returned incorrect amount of rows")
 			}
 			if Q.Cols != tt.wantQ.Cols {
-				t.Errorf("QR_Householder(): Q returned incorrect amount of cols")
+				t.Errorf("qr_Householder(): Q returned incorrect amount of cols")
 			}
 			for i := range Q.Data {
 				if i < len(tt.wantQ.Data) && math.Abs(Q.Data[i]-tt.wantQ.Data[i]) > EPSILON {
-					t.Errorf("QR_algorithm(): Q at index %d, got %f, want %f", i, Q.Data[i], tt.wantQ.Data[i])
+					t.Errorf("qr_Householder(): Q at index %d, got %f, want %f", i, Q.Data[i], tt.wantQ.Data[i])
 				}
 			}
 
 			// checking R
 			if R.Rows != tt.wantR.Rows {
-				t.Errorf("QR_Householder(): R returned incorrect amount of rows")
+				t.Errorf("qr_Householder(): R returned incorrect amount of rows")
 			}
 			if R.Cols != tt.wantR.Cols {
-				t.Errorf("QR_Householder(): R returned incorrect amount of cols")
+				t.Errorf("qr_Householder(): R returned incorrect amount of cols")
 			}
 			for i := range R.Data {
 				if i < len(tt.wantR.Data) && math.Abs(R.Data[i]-tt.wantR.Data[i]) > EPSILON {
-					t.Errorf("QR_algorithm(): R at index %d, got %f, want %f", i, R.Data[i], tt.wantR.Data[i])
+					t.Errorf("qr_Householder(): R at index %d, got %f, want %f", i, R.Data[i], tt.wantR.Data[i])
 				}
 			}
 
@@ -276,13 +276,13 @@ func TestQR_Householder(t *testing.T) {
 			B, _ := m.Multiplication(m.Transpose(Q), Q)
 			for i := range B.Data {
 				if i < len(identity.Data) && math.Abs(B.Data[i]-identity.Data[i]) > EPSILON {
-					t.Errorf("QR_algorithm(): QT*Q at index %d, got %f, want %f", i, B.Data[i], identity.Data[i])
+					t.Errorf("QR_algoqr_Householderrithm(): QT*Q at index %d, got %f, want %f", i, B.Data[i], identity.Data[i])
 				}
 			}
 			C, _ := m.Multiplication(m.Transpose(Q), Q)
 			for i := range C.Data {
 				if i < len(identity.Data) && math.Abs(C.Data[i]-identity.Data[i]) > EPSILON {
-					t.Errorf("QR_algorithm(): Q*QTs at index %d, got %f, want %f", i, C.Data[i], identity.Data[i])
+					t.Errorf("qr_Householder(): Q*QTs at index %d, got %f, want %f", i, C.Data[i], identity.Data[i])
 				}
 			}
 
@@ -290,7 +290,7 @@ func TestQR_Householder(t *testing.T) {
 			D, _ := m.Multiplication(Q, R)
 			for i := range D.Data {
 				if i < len(tt.A.Data) && math.Abs(D.Data[i]-tt.A.Data[i]) > EPSILON {
-					t.Errorf("QR_algorithm(): Q*R at index %d, got %f, want %f", i, D.Data[i], tt.A.Data[i])
+					t.Errorf("qr_Householder(): Q*R at index %d, got %f, want %f", i, D.Data[i], tt.A.Data[i])
 				}
 			}
 
@@ -462,9 +462,9 @@ func TestHasConverged(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := HasConverged(tt.prev, tt.curr)
+			result := hasConverged(tt.prev, tt.curr)
 			if result != tt.want {
-				t.Errorf("HasConverged(): %v, want %v", result, tt.want)
+				t.Errorf("hasConverged(): %v, want %v", result, tt.want)
 			}
 		})
 	}
