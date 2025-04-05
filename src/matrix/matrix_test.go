@@ -1,7 +1,6 @@
 package matrix
 
 import (
-	"fmt"
 	"math"
 	"testing"
 )
@@ -149,7 +148,7 @@ func TestMultiplication(t *testing.T) {
 				Data: []float64{2, 4, 1, 2, 3, 5},
 			},
 			want:    Matrix{},
-			wantErr: errIncorrectSize,
+			wantErr: ErrIncorrectSize,
 		},
 		{
 			name: "Output is correct with floating point matrices",
@@ -260,7 +259,7 @@ func TestAddition(t *testing.T) {
 				Data: []float64{1, 2, 3, 4, 5, 6},
 			},
 			want:    Matrix{},
-			wantErr: errIncorrectSize,
+			wantErr: ErrIncorrectSize,
 		},
 		{
 			name: "output is correct with floating point matrices",
@@ -580,12 +579,9 @@ func TestSortEigenvectors(t *testing.T) {
 
 			for i := range sortedVectors.Data {
 				if i < len(tt.wantVectors.Data) && math.Abs(sortedVectors.Data[i]-tt.wantVectors.Data[i]) > EPSILON {
-					t.Errorf("wanted: %v, got: %v", tt.wantVectors, sortedVectors)
+					t.Errorf(" SortEigenvectors(): at index %d, got %f, want %f", i, sortedValues[i], tt.values[i])
 				}
 			}
-
-			fmt.Println(sortedValues)
-			fmt.Println(sortedVectors)
 		})
 	}
 }

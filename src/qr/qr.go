@@ -4,11 +4,8 @@ import (
 	m "face_recognition/matrix"
 	"fmt"
 	"math"
+	"slices"
 )
-
-// var (
-// 	errIncorrectSize = fmt.Errorf("incorrect size")
-// )
 
 func householderVector(R m.Matrix, col, n int) []float64 {
 	v := make([]float64, n-col)
@@ -58,7 +55,7 @@ func HouseholderMatrix(u []float64, k, n int) m.Matrix {
 }
 
 // https://www.youtube.com/watch?v=n0zDgkbFyQk
-// todo: errors, tests
+// todo: fix for non-square matrices
 func QR_Householder(A m.Matrix) (m.Matrix, m.Matrix, error) {
 	n := A.Rows
 
@@ -66,7 +63,7 @@ func QR_Householder(A m.Matrix) (m.Matrix, m.Matrix, error) {
 	R := m.Matrix{
 		Rows: A.Rows,
 		Cols: A.Cols,
-		Data: append([]float64(nil), A.Data...),
+		Data: slices.Clone(A.Data),
 	}
 	for currCol := range n - 1 {
 		v := householderVector(R, currCol, n)
@@ -90,12 +87,11 @@ func QR_Householder(A m.Matrix) (m.Matrix, m.Matrix, error) {
 }
 
 // https://www.youtube.com/watch?v=McHW221J3UM
-// todo: errors, tests
 func QR_algorithm(A m.Matrix) ([]float64, m.Matrix, error) {
 	Ak := m.Matrix{
 		Rows: A.Rows,
 		Cols: A.Cols,
-		Data: append([]float64(nil), A.Data...),
+		Data: slices.Clone(A.Data),
 	}
 
 	V := m.Identity(A.Rows)
@@ -111,7 +107,6 @@ func QR_algorithm(A m.Matrix) ([]float64, m.Matrix, error) {
 			return nil, m.Matrix{}, err
 		}
 
-		// Update V by multiplying with Q
 		newV, err := m.Multiplication(V, Q)
 		if err != nil {
 			return nil, m.Matrix{}, err

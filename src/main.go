@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	m "face_recognition/matrix"
 	"face_recognition/qr"
@@ -12,22 +11,29 @@ func main() {
 	A := m.Matrix{
 		Rows: 3,
 		Cols: 3,
-		Data: []float64{4, 2, 20, 1, 2, 3, 5, 6, 7},
+		Data: []float64{4, 2, 0, 1, 0, 3, 2, 6, 2},
 	}
 
-	eigenValues, vectors, err := qr.QR_algorithm(A)
+	Q, R, err := qr.QR_Householder(A)
 
-	fmt.Println(eigenValues)
-	fmt.Println(vectors)
+	fmt.Println(Q)
+	fmt.Println(R)
 	fmt.Println(err)
 
-	start := time.Now()
-
-	B, C := m.SortEigenvectors(eigenValues, vectors)
-
-	fmt.Println(time.Since(start))
-
 	fmt.Println()
+
+	B, _ := m.Multiplication(Q, R)
+	// B, _ := m.Multiplication(m.Transpose(Q), Q)
+
 	fmt.Println(B)
-	fmt.Println(C)
+
+	// start := time.Now()
+
+	// B, C := m.SortEigenvectors(eigenValues, vectors)
+
+	// fmt.Println(time.Since(start))
+
+	// fmt.Println()
+	// fmt.Println(B)
+	// fmt.Println(C)
 }

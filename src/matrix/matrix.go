@@ -11,7 +11,7 @@ type Matrix struct {
 }
 
 var (
-	errIncorrectSize = fmt.Errorf("incorrect size")
+	ErrIncorrectSize = fmt.Errorf("incorrect size")
 )
 
 func MultiplicationByScalar(A Matrix, scalar float64) Matrix {
@@ -30,7 +30,7 @@ func MultiplicationByScalar(A Matrix, scalar float64) Matrix {
 
 func Multiplication(A Matrix, B Matrix) (Matrix, error) {
 	if A.Cols != B.Rows {
-		return Matrix{}, errIncorrectSize
+		return Matrix{}, ErrIncorrectSize
 	}
 
 	result := Matrix{
@@ -56,7 +56,7 @@ func Multiplication(A Matrix, B Matrix) (Matrix, error) {
 
 func Addition(A Matrix, B Matrix) (Matrix, error) {
 	if A.Rows != B.Rows || A.Cols != B.Cols {
-		return Matrix{}, errIncorrectSize
+		return Matrix{}, ErrIncorrectSize
 	}
 
 	result := Matrix{
@@ -147,7 +147,6 @@ func SortEigenvectors(eigenvalues []float64, eigenvectors Matrix) ([]float64, Ma
 		for j := i + 1; j < len(indices); j++ {
 			if eigenvalues[indices[i]] < eigenvalues[indices[j]] {
 				indices[i], indices[j] = indices[j], indices[i]
-				// eigenvalues[i], eigenvalues[j] = eigenvalues[j], eigenvalues[i]
 			}
 		}
 	}
