@@ -135,7 +135,6 @@ func Covariance(A Matrix) (Matrix, error) {
 	return result, nil
 }
 
-// todo: tests
 // todo: explore possibility for faster sorting. Just relatively simple solution for now.
 func SortEigenvectors(eigenvalues []float64, eigenvectors Matrix) ([]float64, Matrix) {
 	indices := make([]int, len(eigenvalues))

@@ -96,7 +96,7 @@ func QR_algorithm(A m.Matrix) ([]float64, m.Matrix, error) {
 
 	V := m.Identity(A.Rows)
 
-	for range 50 {
+	for range 200 {
 		Q, R, err := QR_Householder(Ak)
 		if err != nil {
 			return nil, m.Matrix{}, err
