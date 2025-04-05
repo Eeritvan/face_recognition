@@ -293,7 +293,8 @@ func TestAddition(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result, err := Addition(tt.A, tt.B)
 			if err != tt.wantErr {
-				t.Errorf("Addition(): ...")
+				t.Errorf("Addition(): returned wrong error: %v", err)
+
 			}
 			if result.Cols != tt.want.Cols {
 				t.Errorf("Addition(): returned incorrect amount of colums")
@@ -303,7 +304,98 @@ func TestAddition(t *testing.T) {
 			}
 			for i := range result.Data {
 				if i < len(tt.want.Data) && math.Abs(result.Data[i]-tt.want.Data[i]) > EPSILON {
-					t.Errorf("Multiplication(): at index %d, got %f, want %f", i, result.Data[i], tt.want.Data[i])
+					t.Errorf("Addition(): at index %d, got %f, want %f", i, result.Data[i], tt.want.Data[i])
+				}
+			}
+		})
+	}
+}
+
+func TestSubtract(t *testing.T) {
+	tests := []struct {
+		name    string
+		A       Matrix
+		B       Matrix
+		want    Matrix
+		wantErr error
+	}{
+		{
+			name: "output is correct with valid matrices",
+			A: Matrix{
+				Rows: 2,
+				Cols: 2,
+				Data: []float64{1, 2, 3, 4},
+			},
+			B: Matrix{
+				Rows: 2,
+				Cols: 2,
+				Data: []float64{2, 3, 4, 5},
+			},
+			want: Matrix{
+				Rows: 2,
+				Cols: 2,
+				Data: []float64{-1, -1, -1, -1},
+			},
+			wantErr: nil,
+		},
+		{
+			name: "fails with matrices of different dimensions",
+			A: Matrix{
+				Rows: 2,
+				Cols: 2,
+				Data: []float64{1, 2, 3, 4},
+			},
+			B: Matrix{
+				Rows: 3,
+				Cols: 2,
+				Data: []float64{1, 2, 3, 4, 5, 6},
+			},
+			want:    Matrix{},
+			wantErr: errIncorrectSize,
+		},
+		{
+			name: "output is correct with floating point matrices",
+			A: Matrix{
+				Rows: 2,
+				Cols: 2,
+				Data: []float64{1.5, 2.1, 3.68, 0.123},
+			},
+			B: Matrix{
+				Rows: 2,
+				Cols: 2,
+				Data: []float64{0.5, 2.99, -0.321, 0},
+			},
+			want: Matrix{
+				Rows: 2,
+				Cols: 2,
+				Data: []float64{1, -0.89, 4.001, 0.123},
+			},
+			wantErr: nil,
+		},
+		{
+			name:    "output is correct with 'big' matrices",
+			A:       createBigMatrix(92, 112, 2),
+			B:       createBigMatrix(92, 112, 4),
+			want:    createBigMatrix(92, 112, -2),
+			wantErr: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := Subraction(tt.A, tt.B)
+			if err != tt.wantErr {
+				t.Errorf("Subraction(): returned wrong error: %v", err)
+			}
+			if result.Cols != tt.want.Cols {
+				t.Errorf("Subraction(): returned incorrect amount of colums")
+			}
+			if result.Rows != tt.want.Rows {
+				t.Errorf("Subraction(): returned incorrect amount of rows")
+			}
+			for i := range result.Data {
+				if i < len(tt.want.Data) && math.Abs(result.Data[i]-tt.want.Data[i]) > EPSILON {
+					t.Errorf("Subraction(): at index %d, got %f, want %f", i, result.Data[i], tt.want.Data[i])
 				}
 			}
 		})
@@ -579,7 +671,7 @@ func TestSortEigenvectors(t *testing.T) {
 
 			for i := range sortedVectors.Data {
 				if i < len(tt.wantVectors.Data) && math.Abs(sortedVectors.Data[i]-tt.wantVectors.Data[i]) > EPSILON {
-					t.Errorf(" SortEigenvectors(): at index %d, got %f, want %f", i, sortedValues[i], tt.values[i])
+					t.Errorf("SortEigenvectors(): at index %d, got %f, want %f", i, sortedValues[i], tt.values[i])
 				}
 			}
 		})

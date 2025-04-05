@@ -86,7 +86,7 @@ func projectFaces(faces []m.Matrix, eigenfaces, mean m.Matrix) ([]m.Matrix, erro
 	projectedFaces := make([]m.Matrix, len(faces))
 
 	for i, face := range faces {
-		centeredFace, err := m.Addition(face, m.MultiplicationByScalar(mean, -1))
+		centeredFace, err := m.Subraction(face, mean)
 		if err != nil {
 			return nil, err
 		}
@@ -109,7 +109,7 @@ func loadTestImage(eigenfaces, mean m.Matrix) (m.Matrix, error) {
 	}
 	flattenedTest := image.FlattenImage(*testImage)
 
-	centeredTest, err := m.Addition(flattenedTest, m.MultiplicationByScalar(mean, -1))
+	centeredTest, err := m.Subraction(flattenedTest, mean)
 	if err != nil {
 		return m.Matrix{}, err
 	}

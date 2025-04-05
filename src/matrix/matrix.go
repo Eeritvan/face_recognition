@@ -72,6 +72,24 @@ func Addition(A Matrix, B Matrix) (Matrix, error) {
 	return result, nil
 }
 
+func Subraction(A Matrix, B Matrix) (Matrix, error) {
+	if A.Rows != B.Rows || A.Cols != B.Cols {
+		return Matrix{}, errIncorrectSize
+	}
+
+	result := Matrix{
+		Rows: A.Rows,
+		Cols: A.Cols,
+		Data: make([]float64, A.Rows*A.Cols),
+	}
+
+	for n := range A.Data {
+		result.Data[n] = A.Data[n] - B.Data[n]
+	}
+
+	return result, nil
+}
+
 func Transpose(A Matrix) Matrix {
 	result := Matrix{
 		Rows: A.Cols,
@@ -109,10 +127,8 @@ func DifferenceMatrix(vectors []Matrix, mean Matrix) (Matrix, error) {
 		Data: make([]float64, vectors[0].Rows*len(vectors)),
 	}
 
-	negativeMean := MultiplicationByScalar(mean, -1)
-
 	for i := range vectors {
-		diff, err := Addition(vectors[i], negativeMean)
+		diff, err := Subraction(vectors[i], mean)
 		if err != nil {
 			return Matrix{}, err
 		}
