@@ -148,7 +148,7 @@ func TestMultiplication(t *testing.T) {
 				Data: []float64{2, 4, 1, 2, 3, 5},
 			},
 			want:    Matrix{},
-			wantErr: ErrIncorrectSize,
+			wantErr: errIncorrectSize,
 		},
 		{
 			name: "Output is correct with floating point matrices",
@@ -259,7 +259,7 @@ func TestAddition(t *testing.T) {
 				Data: []float64{1, 2, 3, 4, 5, 6},
 			},
 			want:    Matrix{},
-			wantErr: ErrIncorrectSize,
+			wantErr: errIncorrectSize,
 		},
 		{
 			name: "output is correct with floating point matrices",

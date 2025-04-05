@@ -144,6 +144,7 @@ func findClosestMatch(projectedTest m.Matrix, projectedFaces []m.Matrix) (int, f
 	return matchIndex + 1, minDistance
 }
 
+// todo: explore ways to make the timing things clutter the code less
 func main() {
 	k := 9
 	timing := false

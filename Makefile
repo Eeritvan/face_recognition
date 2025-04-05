@@ -5,7 +5,7 @@ BINARY_NAME=face_recognition
 SRC_DIR=./src
 
 start: build
-	cd $(SRC_DIR) && ./$(BINARY_NAME)
+	cd $(SRC_DIR) && ./$(BINARY_NAME) $(ARGS)
 
 build:
 	$(GOBUILD) -C $(SRC_DIR) -o $(BINARY_NAME)

@@ -1,11 +1,14 @@
 package qr
 
 import (
-	m "face_recognition/matrix"
 	"fmt"
 	"math"
 	"slices"
+
+	m "face_recognition/matrix"
 )
+
+// todo: come up with better names for all the variables.
 
 func householderVector(R m.Matrix, col, n int) []float64 {
 	v := make([]float64, n-col)

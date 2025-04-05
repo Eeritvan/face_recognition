@@ -11,7 +11,7 @@ type Matrix struct {
 }
 
 var (
-	ErrIncorrectSize = fmt.Errorf("incorrect size")
+	errIncorrectSize = fmt.Errorf("incorrect size")
 )
 
 func MultiplicationByScalar(A Matrix, scalar float64) Matrix {
@@ -30,7 +30,7 @@ func MultiplicationByScalar(A Matrix, scalar float64) Matrix {
 
 func Multiplication(A Matrix, B Matrix) (Matrix, error) {
 	if A.Cols != B.Rows {
-		return Matrix{}, ErrIncorrectSize
+		return Matrix{}, errIncorrectSize
 	}
 
 	result := Matrix{
@@ -56,7 +56,7 @@ func Multiplication(A Matrix, B Matrix) (Matrix, error) {
 
 func Addition(A Matrix, B Matrix) (Matrix, error) {
 	if A.Rows != B.Rows || A.Cols != B.Cols {
-		return Matrix{}, ErrIncorrectSize
+		return Matrix{}, errIncorrectSize
 	}
 
 	result := Matrix{
@@ -135,7 +135,7 @@ func Covariance(A Matrix) (Matrix, error) {
 	return result, nil
 }
 
-// todo: explore possibility for faster sorting. Just relatively simple solution for now.
+// todo: explore possibility for faster sorting. Just relatively simple bubble sort for now.
 func SortEigenvectors(eigenvalues []float64, eigenvectors Matrix) ([]float64, Matrix) {
 	indices := make([]int, len(eigenvalues))
 	for i := range indices {

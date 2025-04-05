@@ -26,17 +26,16 @@ func LoadPgmImage(filepath string) (*m.Matrix, error) {
 
 	reader := bufio.NewReader(file)
 
-	// skip the p5 header
 	_, err = reader.ReadString('\n')
 	if err != nil {
 		return nil, errFileReading
 	}
 
-	dimLine, err := reader.ReadString('\n')
+	line, err := reader.ReadString('\n')
 	if err != nil {
 		return nil, errFileReading
 	}
-	dimensions := strings.Fields(dimLine)
+	dimensions := strings.Fields(line)
 	width, err := strconv.Atoi(dimensions[0])
 	if err != nil {
 		return nil, errFileReading
@@ -46,7 +45,6 @@ func LoadPgmImage(filepath string) (*m.Matrix, error) {
 		return nil, errFileReading
 	}
 
-	// skip the max value line
 	_, err = reader.ReadString('\n')
 	if err != nil {
 		return nil, errFileReading
