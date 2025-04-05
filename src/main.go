@@ -3,13 +3,31 @@ package main
 import (
 	"fmt"
 	"math"
+	"os"
 	"strconv"
+	"time"
 
 	"face_recognition/image"
 	m "face_recognition/matrix"
 	"face_recognition/qr"
 )
 
+func help() {
+	fmt.Println(`
+usage:
+    ./face_recognition [options]
+
+Options:
+-h             shows this help message and terminates
+-k <number>    sets the number of eigenfaces to use. Higher values will provide better accuracy. At the moment the default value is 9.
+-t             display time taken to execute each step of the algorithm
+	`)
+	os.Exit(0)
+}
+
+// todo: consider own file(s) for all of the function below excluding the main function
+
+// todo: tests
 func loadTrainingFaces(count int) ([]m.Matrix, error) {
 	var faces []m.Matrix
 
@@ -25,6 +43,7 @@ func loadTrainingFaces(count int) ([]m.Matrix, error) {
 	return faces, nil
 }
 
+// todo: tests
 func computeEigenfaces(faces []m.Matrix, k int) (m.Matrix, m.Matrix, error) {
 	mean, err := image.MeanOfImages(faces)
 	if err != nil {
@@ -62,6 +81,7 @@ func computeEigenfaces(faces []m.Matrix, k int) (m.Matrix, m.Matrix, error) {
 	return eigenfaces, mean, nil
 }
 
+// todo: tests
 func projectFaces(faces []m.Matrix, eigenfaces, mean m.Matrix) ([]m.Matrix, error) {
 	projectedFaces := make([]m.Matrix, len(faces))
 
@@ -81,8 +101,9 @@ func projectFaces(faces []m.Matrix, eigenfaces, mean m.Matrix) ([]m.Matrix, erro
 	return projectedFaces, nil
 }
 
+// todo: tests
 func loadTestImage(eigenfaces, mean m.Matrix) (m.Matrix, error) {
-	testImage, err := image.LoadPgmImage("data/s20/10.pgm")
+	testImage, err := image.LoadPgmImage("data/s1/10.pgm")
 	if err != nil {
 		return m.Matrix{}, err
 	}
@@ -101,6 +122,7 @@ func loadTestImage(eigenfaces, mean m.Matrix) (m.Matrix, error) {
 	return projectedTest, nil
 }
 
+// todo: tests
 func findClosestMatch(projectedTest m.Matrix, projectedFaces []m.Matrix) (int, float64) {
 	var minDistance float64 = math.Inf(1)
 	matchIndex := -1
@@ -123,14 +145,59 @@ func findClosestMatch(projectedTest m.Matrix, projectedFaces []m.Matrix) (int, f
 }
 
 func main() {
+	k := 9
+	timing := false
+	args := os.Args[1:]
+
+	for i, flag := range args {
+		switch flag {
+		case "-h":
+			help()
+		case "-k":
+			// todo: check that value is valid. positive and less than the
+			// 		 size of the training data
+			// todo: better error message
+			value, err := strconv.Atoi(args[i+1])
+			if err != nil {
+				panic(err)
+			}
+			k = value
+		case "-t":
+			timing = true
+		}
+	}
+
+	var start time.Time
+	if timing {
+		start = time.Now()
+	}
+
 	faces, err := loadTrainingFaces(9)
 	if err != nil {
 		panic(err)
 	}
 
-	eigenfaces, mean, err := computeEigenfaces(faces, 9)
+	if timing {
+		fmt.Println("time to process training images:", time.Since(start))
+	}
+
+	var eigenfacesTime time.Time
+	if timing {
+		eigenfacesTime = time.Now()
+	}
+
+	eigenfaces, mean, err := computeEigenfaces(faces, k)
 	if err != nil {
 		panic(err)
+	}
+
+	if timing {
+		fmt.Println("time to compute eigenfaces:", time.Since(eigenfacesTime))
+	}
+
+	var eigenfaceProjectionTime time.Time
+	if timing {
+		eigenfaceProjectionTime = time.Now()
 	}
 
 	projectedFaces, err := projectFaces(faces, eigenfaces, mean)
@@ -138,12 +205,26 @@ func main() {
 		panic(err)
 	}
 
+	if timing {
+		fmt.Println("time to project eigenfaces:", time.Since(eigenfaceProjectionTime))
+	}
+
 	projectedTest, err := loadTestImage(eigenfaces, mean)
 	if err != nil {
 		panic(err)
 	}
 
+	var matchTime time.Time
+	if timing {
+		matchTime = time.Now()
+	}
+
 	matchIndex, minDistance := findClosestMatch(projectedTest, projectedFaces)
+
+	if timing {
+		fmt.Println("time to find closest match:", time.Since(matchTime))
+		fmt.Println("Totaltime:", time.Since(start))
+	}
 
 	fmt.Println(matchIndex+1, minDistance)
 }
