@@ -4,6 +4,8 @@ GOTEST=$(GOCMD) test
 BINARY_NAME=face_recognition
 SRC_DIR=./src
 
+.PHONY: start build
+
 start: build
 	cd $(SRC_DIR) && ./$(BINARY_NAME) $(ARGS)
 

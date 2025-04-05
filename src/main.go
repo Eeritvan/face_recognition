@@ -224,7 +224,7 @@ func main() {
 
 	if timing {
 		fmt.Println("time to find closest match:", time.Since(matchTime))
-		fmt.Println("Totaltime:", time.Since(start))
+		fmt.Println("Total time:", time.Since(start))
 	}
 
 	fmt.Println(matchIndex+1, minDistance)
