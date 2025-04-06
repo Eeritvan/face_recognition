@@ -654,24 +654,18 @@ func TestSortEigenvectors(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sortedValues, sortedVectors := SortEigenvectors(tt.values, tt.vectors)
-			for i := range sortedValues {
-				if i < len(tt.values) && math.Abs(sortedValues[i]-tt.wantValues[i]) > EPSILON {
-					t.Errorf("SortEigenvectors(): at index %d, got %f, want %f", i, sortedValues[i], tt.values[i])
-				}
-			}
-
-			if sortedVectors.Rows != tt.wantVectors.Rows {
+			result := SortEigenvectors(tt.values, tt.vectors)
+			if result.Rows != tt.wantVectors.Rows {
 				t.Errorf("SortEigenvectors(): returned incorrect amount of rows")
 			}
 
-			if sortedVectors.Cols != tt.wantVectors.Cols {
+			if result.Cols != tt.wantVectors.Cols {
 				t.Errorf("SortEigenvectors(): returned incorrect amount of cols")
 			}
 
-			for i := range sortedVectors.Data {
-				if i < len(tt.wantVectors.Data) && math.Abs(sortedVectors.Data[i]-tt.wantVectors.Data[i]) > EPSILON {
-					t.Errorf("SortEigenvectors(): at index %d, got %f, want %f", i, sortedValues[i], tt.values[i])
+			for i := range result.Data {
+				if i < len(tt.wantVectors.Data) && math.Abs(result.Data[i]-tt.wantVectors.Data[i]) > EPSILON {
+					t.Errorf("SortEigenvectors(): at index %d, got %f, want %f", i, result.Data[i], tt.values[i])
 				}
 			}
 		})

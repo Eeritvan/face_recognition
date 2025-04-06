@@ -1,7 +1,6 @@
 package qr
 
 import (
-	"fmt"
 	"math"
 	"slices"
 
@@ -100,7 +99,7 @@ func QR_algorithm(A m.Matrix) ([]float64, m.Matrix, error) {
 
 	V := m.Identity(A.Rows)
 
-	for range 200 {
+	for {
 		Q, R, err := qr_Householder(Ak)
 		if err != nil {
 			return nil, m.Matrix{}, err
@@ -128,8 +127,6 @@ func QR_algorithm(A m.Matrix) ([]float64, m.Matrix, error) {
 
 		Ak = newAk
 	}
-
-	return nil, m.Matrix{}, fmt.Errorf("something went wrong")
 }
 
 func hasConverged(prev, curr m.Matrix) bool {

@@ -65,7 +65,7 @@ func computeEigenfaces(faces []m.Matrix, k int) (m.Matrix, m.Matrix, error) {
 		return m.Matrix{}, m.Matrix{}, err
 	}
 
-	_, sortedVectors := m.SortEigenvectors(eigenvalues, eigenvectors)
+	sortedVectors := m.SortEigenvectors(eigenvalues, eigenvectors)
 
 	eigenfaces := m.Matrix{
 		Rows: diffMatrix.Rows,
@@ -103,7 +103,7 @@ func projectFaces(faces []m.Matrix, eigenfaces, mean m.Matrix) ([]m.Matrix, erro
 
 // todo: tests
 func loadTestImage(eigenfaces, mean m.Matrix) (m.Matrix, error) {
-	testImage, err := image.LoadPgmImage("data/s1/10.pgm")
+	testImage, err := image.LoadPgmImage("data/s20/1.pgm")
 	if err != nil {
 		return m.Matrix{}, err
 	}
@@ -173,7 +173,7 @@ func main() {
 		start = time.Now()
 	}
 
-	faces, err := loadTrainingFaces(9)
+	faces, err := loadTrainingFaces(10)
 	if err != nil {
 		panic(err)
 	}
