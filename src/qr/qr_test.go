@@ -276,7 +276,7 @@ func TestQR_Householder(t *testing.T) {
 			B, _ := m.Multiplication(m.Transpose(Q), Q)
 			for i := range B.Data {
 				if i < len(identity.Data) && math.Abs(B.Data[i]-identity.Data[i]) > EPSILON {
-					t.Errorf("QR_algoqr_Householderrithm(): QT*Q at index %d, got %f, want %f", i, B.Data[i], identity.Data[i])
+					t.Errorf("qr_Householder(): QT*Q at index %d, got %f, want %f", i, B.Data[i], identity.Data[i])
 				}
 			}
 			C, _ := m.Multiplication(m.Transpose(Q), Q)
@@ -293,7 +293,6 @@ func TestQR_Householder(t *testing.T) {
 					t.Errorf("qr_Householder(): Q*R at index %d, got %f, want %f", i, D.Data[i], tt.A.Data[i])
 				}
 			}
-
 		})
 	}
 }

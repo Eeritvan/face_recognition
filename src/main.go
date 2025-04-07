@@ -155,7 +155,7 @@ func main() {
 		case "-h":
 			help()
 		case "-k":
-			// todo: check that value is valid. positive and less than the
+			// todo: check that the value is valid. positive and less than the
 			// 		 size of the training data
 			// todo: better error message
 			value, err := strconv.Atoi(args[i+1])
