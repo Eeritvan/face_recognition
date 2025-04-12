@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
@@ -18,10 +19,16 @@ usage:
     ./face_recognition [options]
 
 Options:
--h             shows this help message and terminates
--k <number>    sets the number of eigenfaces to use. Higher values will provide better accuracy. At the moment the default value is 9.
--t             display time taken to execute each step of the algorithm
--d <numbers>   Specify training datasets to use (e.g., 1,2,3)
+    -h             shows this help message and terminates
+    -k <number>    sets the number of eigenfaces to use. Higher values will provide better accuracy. At the moment the default value is 9.
+    -t             display time taken to execute each step of the algorithm
+    -d <numbers>   Specify training datasets to use (e.g., 1,2,3). By default two random sets are used.
+
+Examples:
+    ./face_recognition                     # Run with default settings (k=9)
+    ./face_recognition -k 15               # Use 15 eigenfaces
+    ./face_recognition -d 1,2,3            # Use datasets 1, 2 and 3
+    ./face_recognition -k 20 -d 1 2 3 4    # Use 20 eigenfaces with datasets 1-4
 	`)
 }
 
@@ -71,6 +78,16 @@ func main() {
 		case "-t":
 			timing = true
 		}
+	}
+
+	if len(dataSets) == 0 {
+		num1 := rand.Intn(40) + 1
+		num2 := rand.Intn(40) + 1
+		for num2 == num1 {
+			num2 = rand.Intn(40) + 1
+		}
+		dataSets = append(dataSets, num1)
+		dataSets = append(dataSets, num2)
 	}
 
 	if k < 0 || k > len(dataSets)*imagesFromEachSet {
@@ -141,5 +158,7 @@ func main() {
 		fmt.Println("Total time:", time.Since(totalStart))
 	}
 
-	fmt.Printf("closest match with: %v\nsimilarity: %.1f %% \n", matchIndex, similarity)
+	fmt.Println("Data used:", dataSets)
+	fmt.Println("closest match with:", matchIndex)
+	fmt.Printf("similarity: %.1f%% \n", similarity)
 }
