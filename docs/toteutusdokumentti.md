@@ -24,6 +24,8 @@ Olen käyttänyt claude 3.5 sonnet mallia keksimään joillekin muuttujille ja f
 - https://km.pcz.pl/konferencja/dokumenty/MMFT2017/Caban%20L.pdf
 - https://www.geeksforgeeks.org/ml-face-recognition-using-eigenfaces-pca-algorithm/
 - https://www.youtube.com/watch?v=n0zDgkbFyQk
+- https://www.youtube.com/watch?v=McHW221J3UM
+- https://stats.stackexchange.com/questions/53068/euclidean-distance-score-and-similarity
 
 data:
 - https://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html

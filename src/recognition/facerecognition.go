@@ -87,7 +87,7 @@ func ProjectFaces(faces []m.Matrix, eigenfaces, mean m.Matrix) ([]m.Matrix, erro
 
 // todo: tests
 func LoadTestImage(eigenfaces, mean m.Matrix) (m.Matrix, error) {
-	testImage, err := image.LoadPgmImage("data/s15/10.pgm")
+	testImage, err := image.LoadPgmImage("data/s20/10.pgm")
 	if err != nil {
 		return m.Matrix{}, err
 	}
@@ -107,9 +107,6 @@ func LoadTestImage(eigenfaces, mean m.Matrix) (m.Matrix, error) {
 }
 
 // todo: tests
-// todo: better function for approximations
-// todo: fix the image possibly being in the set
-// https://stats.stackexchange.com/questions/53068/euclidean-distance-score-and-similarity
 func FindClosestMatch(projectedTest m.Matrix, projectedFaces []m.Matrix) (int, float64) {
 	var minDistance float64 = math.Inf(1)
 	matchIndex := -1
