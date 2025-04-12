@@ -98,7 +98,9 @@ func main() {
 		fmt.Print("Loading many datasets may be super slow. Continue? (Y/n) ")
 
 		var response string
-		fmt.Scan(&response)
+		if _, err := fmt.Scan(&response); err != nil {
+			panic(err)
+		}
 
 		response = strings.ToLower(response)
 		if response == "n" || response == "no" {
