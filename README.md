@@ -9,7 +9,8 @@
 - [viikko 1](docs/viikkopalautukset/viikko1.md)
 - [viikko 2](docs/viikkopalautukset/viikko2.md)
 - [viikko 3](docs/viikkopalautukset/viikko3.md)
-- [viikko 3](docs/viikkopalautukset/viikko4.md)
+- [viikko 4](docs/viikkopalautukset/viikko4.md)
+- [viikko 5](docs/viikkopalautukset/viikko5.md)
 
 
 ## Käyttöohje
