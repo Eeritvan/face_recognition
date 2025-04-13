@@ -8,8 +8,10 @@ Eigenface-menetelmä toteutetaan aluksi valitsemalla jokin määrä harjoitusdat
 Tämä prosessi käytännössä vastaa pääkomponenttianalyysiä (PCA), jossa lasketaan ne pääkomponentit, jotka parhaiten kuvaavat datan varianssia. PCA auttaa siis tunnistamaan ne ominaispiirteet, jotka ovat merkityksellisimpiä kasvojentunnistuksen kannalta.
 
 ## aika vaativuudet
-- matriisitulo = O(n**3)
-- QR-algoritmi = O(n**3)
+- matriisitulo = O(n**3) 
+- QR-algoritmi = O(n**4)
+- Kuvien projektointi = O(m * k * b) 
+- lähimmän osuman etsiminen = O(k * n)
 #todo
 
 ## puutteet ja parannusehdotukset
