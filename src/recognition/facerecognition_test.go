@@ -297,7 +297,7 @@ func TestGetSimilarity(t *testing.T) {
 			similarity := GetSimilarity(tt.minDistance)
 
 			if math.Abs(similarity-tt.wantSimilarity) > EPSILON {
-				t.Errorf("FindClosestMatch(): returned minDistance: %v, want %v", similarity, tt.wantSimilarity)
+				t.Errorf("GetSimilarity(): returned similarity: %v, want %v", similarity, tt.wantSimilarity)
 			}
 		})
 	}

@@ -19,7 +19,14 @@ QR-algoritmin testit:
 - Householderin vektorin laskeva funktio palauttaa oikeat arvot eri sarakkeilla sekä toimii positiivisilla että negatiivisilla luvuilla
 - normivektorin laskeminen testattu toimivan positiivisilla ja negatiivisilla kokonaisluvuilla.
 - normivektorin laskeminen testattu palauttavan 0 kun vektori on nollavektori.
-#todo
+- QR-hajotelma (householder) palauttaa oikeat Q ja R matriisit jotka on varmistettu oikeaksi laskimella. Testit myös varmistaa, että Q * R muodostaa alkuperäisen matriisin takaisin.
+- QR-algoritmi palauttaa oikeat ominaisarvot ja ominaisvektorit kokonais- ja liukuluvuilla. Tulokset on laskettu syötteillä etukäteen laskimella ja funktion tulosta verrataan näihin joilla varmistetaan, että ne on oikein.
+
+"pää funktioiden" testit:
+- eigenface funktio palauttaa oikeat eigenface vektorit ja kuvien keskiarvon. Tulokset on laskettu laskimella ja testit vertaa funktion syötettä oikeisiin tuloksiin.
+- eigenface projektointi testattu palauttavan oikeat projektio matriisit. Tulokset on laskettu laskimella ja funktion syötettä verrataan niihin.
+- lähimmän kuvan ja euklidisen etäisyyden laskeva funktio todettu toimivaksi vertaamalla funktion palauttavia arvoja laskimella laskettuihin tiedettyihin tuloksiin. 
+- lähimmän kuvan ja euklidisen etäisyyden laskeva palauttaa etäisyyden 0 ja saman kuvan takaisin kun kuva löytyy jo harjoitusdatasta. 
 
 ## testien suorittaminen
 Testit voi suorittaa Go:n omalla testauskirjastolla. Sen pitäisi tulla Go:n asennuksen mukana joten sitä varten ei tarvitse ladata mitään. 

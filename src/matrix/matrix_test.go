@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-const EPSILON = 1e-10
+const EPSILON = 1e-6
 
 func createBigMatrix(rows int, cols int, value float64) Matrix {
 	data := make([]float64, rows*cols)

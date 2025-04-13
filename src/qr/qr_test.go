@@ -1,9 +1,10 @@
 package qr
 
 import (
-	m "face_recognition/matrix"
 	"math"
 	"testing"
+
+	m "face_recognition/matrix"
 )
 
 const EPSILON = 1e-6
@@ -325,7 +326,7 @@ func TestQR_algorithm(t *testing.T) {
 			wantErr: nil,
 		},
 		{
-			name: "output is correct with integers",
+			name: "output is correct with floating point numbers",
 			A: m.Matrix{
 				Rows: 3,
 				Cols: 3,
