@@ -343,7 +343,7 @@ func TestQR_algorithm(t *testing.T) {
 			},
 			wantErr: nil,
 		},
-		// fix needed for non-square matrices !!!
+		// todo: fix needed for non-square matrices
 		// {
 		// 	name: "",
 		// 	A: m.Matrix{
@@ -362,7 +362,7 @@ func TestQR_algorithm(t *testing.T) {
 			values, vectors, err := QR_algorithm(tt.A)
 
 			if err != tt.wantErr {
-				t.Errorf("%v", err)
+				t.Errorf("QR_algorithm(): returned wrong error: %v", err)
 			}
 
 			for i := range values {

@@ -113,6 +113,7 @@ func main() {
 	var projectedFaces []m.Matrix
 	var projectedTest m.Matrix
 	var matchIndex int
+	var minDistance float64
 	var similarity float64
 
 	totalStart := time.Now()
@@ -150,7 +151,8 @@ func main() {
 	}
 
 	if err := timeExecution("find closest match", timing, func() error {
-		matchIndex, similarity = r.FindClosestMatch(projectedTest, projectedFaces)
+		matchIndex, minDistance = r.FindClosestMatch(projectedTest, projectedFaces)
+		similarity = r.GetSimilarity(minDistance)
 		return nil
 	}); err != nil {
 		log.Fatal(err)

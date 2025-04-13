@@ -27,7 +27,6 @@ func LoadTrainingFaces(dataSets []int, count int) ([]m.Matrix, error) {
 	return faces, nil
 }
 
-// todo: tests
 func ComputeEigenfaces(faces []m.Matrix, k int) (m.Matrix, m.Matrix, error) {
 	mean, err := image.MeanOfImages(faces)
 	if err != nil {
@@ -65,7 +64,6 @@ func ComputeEigenfaces(faces []m.Matrix, k int) (m.Matrix, m.Matrix, error) {
 	return eigenfaces, mean, nil
 }
 
-// todo: tests
 func ProjectFaces(faces []m.Matrix, eigenfaces, mean m.Matrix) ([]m.Matrix, error) {
 	projectedFaces := make([]m.Matrix, len(faces))
 
@@ -106,7 +104,6 @@ func LoadTestImage(eigenfaces, mean m.Matrix) (m.Matrix, error) {
 	return projectedTest, nil
 }
 
-// todo: tests
 func FindClosestMatch(projectedTest m.Matrix, projectedFaces []m.Matrix) (int, float64) {
 	var minDistance float64 = math.Inf(1)
 	matchIndex := -1
@@ -125,7 +122,9 @@ func FindClosestMatch(projectedTest m.Matrix, projectedFaces []m.Matrix) (int, f
 		}
 	}
 
-	similarity := 1.0 / (1 + minDistance) * 100.0
+	return matchIndex + 1, minDistance
+}
 
-	return matchIndex + 1, similarity
+func GetSimilarity(minDistance float64) float64 {
+	return 1.0 / (1 + minDistance) * 100.0
 }
