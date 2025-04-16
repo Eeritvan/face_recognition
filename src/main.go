@@ -107,10 +107,12 @@ func run(timing bool, k int, dataSets []int, imagesFromEachSet int) {
 	fmt.Printf("similarity: %.1f%% \n", similarity)
 }
 
+// todo: refactor
 func main() {
 	k := 9
 	imagesFromEachSet := 10
 	timing := false
+	interactive := true
 	args := os.Args[1:]
 	var dataSets []int
 
@@ -125,6 +127,7 @@ func main() {
 				panic(err)
 			}
 			k = value
+			interactive = false
 		case "-d":
 			j := i + 1
 			for j < len(args) && !strings.HasPrefix(args[j], "-") {
@@ -135,8 +138,10 @@ func main() {
 				dataSets = append(dataSets, value)
 				j++
 			}
+			interactive = false
 		case "-t":
 			timing = true
+			interactive = false
 		}
 	}
 
@@ -150,23 +155,102 @@ func main() {
 		dataSets = append(dataSets, num2)
 	}
 
-	if k < 0 || k > len(dataSets)*imagesFromEachSet {
-		log.Fatal("invalid -k value. It must be positive and less than the size of the training data")
-	}
-
-	if len(dataSets) > 4 {
-		fmt.Print("Loading many datasets may be super slow. Continue? (Y/n) ")
-
-		var response string
-		if _, err := fmt.Scan(&response); err != nil {
-			panic(err)
+	if !interactive {
+		if k < 0 || k > len(dataSets)*imagesFromEachSet {
+			log.Fatal("invalid -k value. It must be positive and less than the size of the training data")
 		}
 
-		response = strings.ToLower(response)
-		if response == "n" || response == "no" {
-			os.Exit(0)
+		if len(dataSets) > 4 {
+			fmt.Print("Loading many datasets may be super slow. Continue? (Y/n) ")
+
+			var response string
+			if _, err := fmt.Scan(&response); err != nil {
+				panic(err)
+			}
+
+			response = strings.ToLower(response)
+			if response == "n" || response == "no" {
+				os.Exit(0)
+			}
+		}
+
+		run(timing, k, dataSets, imagesFromEachSet)
+	} else {
+		for {
+			fmt.Println("\ncurrent settings:")
+			fmt.Println("-----------------------------------")
+			fmt.Println("  eigenfaces (k):   ", k)
+			fmt.Println("  data sets (d):    ", dataSets)
+			fmt.Println("  images per set:   ", imagesFromEachSet)
+			fmt.Println("-----------------------------------")
+			fmt.Println("\navailable commands:")
+			fmt.Println("  k    - change number of eigenfaces")
+			fmt.Println("  d    - select data sets")
+			fmt.Println("  ?    - placeholder for now.")
+			fmt.Println("  run  - run the algoritm")
+			fmt.Println("  quit - exit")
+
+			fmt.Print("\nenter command: ")
+			var cmd string
+			_, err := fmt.Scan(&cmd)
+			if err != nil {
+				panic(err)
+			}
+
+			switch cmd {
+			case "k":
+				fmt.Print("enter number of eigenfaces to use: ")
+				if _, err := fmt.Scan(&k); err != nil {
+					// todo: proper error message
+					panic(err)
+				}
+			case "d":
+				fmt.Print("\nEnter dataset numbers (1-40) (0 to break): ")
+
+				var newDataSets []int
+				for {
+					var val int
+					if _, err := fmt.Scan(&val); err != nil {
+						// todo: proper error message
+						panic(err)
+					}
+					if val == 0 {
+						break
+					}
+					if val < 1 || val > 40 {
+						fmt.Println("invalid number")
+						continue
+					}
+
+					newDataSets = append(newDataSets, val)
+				}
+				dataSets = newDataSets
+
+			case "run":
+				if k < 0 || k > len(dataSets)*imagesFromEachSet {
+					fmt.Println("invalid -k value. It must be positive and less than the size of the training data")
+					continue
+				}
+
+				if len(dataSets) > 4 {
+					fmt.Print("Loading many datasets may be super slow. I recommend using at most 4 sets. Continue? (Y/n) ")
+
+					var response string
+					if _, err := fmt.Scan(&response); err != nil {
+						panic(err)
+					}
+
+					response = strings.ToLower(response)
+					if response == "n" || response == "no" {
+						os.Exit(0)
+					}
+				}
+
+				run(timing, k, dataSets, imagesFromEachSet)
+				fmt.Println("\n###############################")
+			case "quit":
+				os.Exit(0)
+			}
 		}
 	}
-
-	run(timing, k, dataSets, imagesFromEachSet)
 }
