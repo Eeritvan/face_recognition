@@ -47,6 +47,66 @@ func timeExecution(name string, timing bool, fn func() error) error {
 	return nil
 }
 
+func run(timing bool, k int, dataSets []int, imagesFromEachSet int) {
+	var faces []m.Matrix
+	var eigenfaces, mean m.Matrix
+	var projectedFaces []m.Matrix
+	var projectedTest m.Matrix
+	var matchIndex int
+	var minDistance float64
+	var similarity float64
+
+	totalStart := time.Now()
+
+	if err := timeExecution("process training images", timing, func() error {
+		var err error
+		faces, err = r.LoadTrainingFaces(dataSets, imagesFromEachSet)
+		return err
+	}); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := timeExecution("compute eigenfaces", timing, func() error {
+		var err error
+		eigenfaces, mean, err = r.ComputeEigenfaces(faces, k)
+		return err
+	}); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := timeExecution("project eigenfaces", timing, func() error {
+		var err error
+		projectedFaces, err = r.ProjectFaces(faces, eigenfaces, mean)
+		return err
+	}); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := timeExecution("load test image", timing, func() error {
+		var err error
+		projectedTest, err = r.LoadTestImage(eigenfaces, mean)
+		return err
+	}); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := timeExecution("find closest match", timing, func() error {
+		matchIndex, minDistance = r.FindClosestMatch(projectedTest, projectedFaces)
+		similarity = r.GetSimilarity(minDistance)
+		return nil
+	}); err != nil {
+		log.Fatal(err)
+	}
+
+	if timing {
+		fmt.Println("Total time:", time.Since(totalStart))
+	}
+
+	fmt.Println("Data used:", dataSets)
+	fmt.Println("closest match with:", matchIndex)
+	fmt.Printf("similarity: %.1f%% \n", similarity)
+}
+
 func main() {
 	k := 9
 	imagesFromEachSet := 10
@@ -108,61 +168,5 @@ func main() {
 		}
 	}
 
-	var faces []m.Matrix
-	var eigenfaces, mean m.Matrix
-	var projectedFaces []m.Matrix
-	var projectedTest m.Matrix
-	var matchIndex int
-	var minDistance float64
-	var similarity float64
-
-	totalStart := time.Now()
-
-	if err := timeExecution("process training images", timing, func() error {
-		var err error
-		faces, err = r.LoadTrainingFaces(dataSets, imagesFromEachSet)
-		return err
-	}); err != nil {
-		log.Fatal(err)
-	}
-
-	if err := timeExecution("compute eigenfaces", timing, func() error {
-		var err error
-		eigenfaces, mean, err = r.ComputeEigenfaces(faces, k)
-		return err
-	}); err != nil {
-		log.Fatal(err)
-	}
-
-	if err := timeExecution("project eigenfaces", timing, func() error {
-		var err error
-		projectedFaces, err = r.ProjectFaces(faces, eigenfaces, mean)
-		return err
-	}); err != nil {
-		log.Fatal(err)
-	}
-
-	if err := timeExecution("load test image", timing, func() error {
-		var err error
-		projectedTest, err = r.LoadTestImage(eigenfaces, mean)
-		return err
-	}); err != nil {
-		log.Fatal(err)
-	}
-
-	if err := timeExecution("find closest match", timing, func() error {
-		matchIndex, minDistance = r.FindClosestMatch(projectedTest, projectedFaces)
-		similarity = r.GetSimilarity(minDistance)
-		return nil
-	}); err != nil {
-		log.Fatal(err)
-	}
-
-	if timing {
-		fmt.Println("Total time:", time.Since(totalStart))
-	}
-
-	fmt.Println("Data used:", dataSets)
-	fmt.Println("closest match with:", matchIndex)
-	fmt.Printf("similarity: %.1f%% \n", similarity)
+	run(timing, k, dataSets, imagesFromEachSet)
 }
