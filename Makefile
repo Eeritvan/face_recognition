@@ -12,7 +12,7 @@ start: build
 build:
 	$(GOBUILD) -C $(SRC_DIR) -o $(BINARY_NAME)
 
-test:
+test: build
 	$(GOTEST) -C $(SRC_DIR) ./... -cover
 
 clean:

@@ -172,8 +172,6 @@ func main() {
 		}
 	}
 
-	// validate test image input
-
 	if len(dataSets) == 0 {
 		num1 := rand.Intn(40) + 1
 		num2 := rand.Intn(40) + 1
