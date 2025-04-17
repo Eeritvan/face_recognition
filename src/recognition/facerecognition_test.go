@@ -278,17 +278,17 @@ func TestGetSimilarity(t *testing.T) {
 		{
 			name:           "output is correct when distance is 5",
 			minDistance:    5,
-			wantSimilarity: 16.666666,
+			wantSimilarity: 80,
 		},
 		{
 			name:           "output is correct when distance is 10",
 			minDistance:    10,
-			wantSimilarity: 9.090909,
+			wantSimilarity: 60,
 		},
 		{
 			name:           "output is correct when distance is 20",
 			minDistance:    20,
-			wantSimilarity: 4.761904,
+			wantSimilarity: 20,
 		},
 	}
 

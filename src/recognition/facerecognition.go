@@ -126,5 +126,5 @@ func FindClosestMatch(projectedTest m.Matrix, projectedFaces []m.Matrix) (int, f
 }
 
 func GetSimilarity(minDistance float64) float64 {
-	return 1.0 / (1 + minDistance) * 100.0
+	return max((1-(minDistance*0.04))*100.0, 0)
 }
