@@ -26,7 +26,7 @@ Options:
 
 Examples:
     ./face_recognition                     # Run with default settings (k=9)
-    ./face_recognition -k 15               # Use 15 eigenfaces
+    ./face_r"os/exec"ecognition -k 15               # Use 15 eigenfaces
     ./face_recognition -d 1,2,3            # Use datasets 1, 2 and 3
     ./face_recognition -k 20 -d 1 2 3 4    # Use 20 eigenfaces with datasets 1-4
 	`)
@@ -99,7 +99,7 @@ func run(timing bool, k int, dataSets []int, imagesFromEachSet int) {
 	}
 
 	if timing {
-		fmt.Println("Total time:", time.Since(totalStart))
+		fmt.Print("Total time:", time.Since(totalStart), "\n\n")
 	}
 
 	fmt.Println("Data used:", dataSets)
@@ -179,13 +179,15 @@ func main() {
 		for {
 			fmt.Println("\ncurrent settings:")
 			fmt.Println("-----------------------------------")
-			fmt.Println("  eigenfaces (k):   ", k)
-			fmt.Println("  data sets (d):    ", dataSets)
-			fmt.Println("  images per set:   ", imagesFromEachSet)
+			fmt.Println("  eigenfaces (k):        ", k)
+			fmt.Println("  data sets (d):         ", dataSets)
+			fmt.Println("  images per set:        ", imagesFromEachSet)
+			fmt.Println("  time algorithm steps:  ", timing)
 			fmt.Println("-----------------------------------")
 			fmt.Println("\navailable commands:")
 			fmt.Println("  k    - change number of eigenfaces")
 			fmt.Println("  d    - select data sets")
+			fmt.Println("  t    - toggle timing")
 			fmt.Println("  ?    - placeholder for now.")
 			fmt.Println("  run  - run the algoritm")
 			fmt.Println("  quit - exit")
@@ -194,6 +196,7 @@ func main() {
 			var cmd string
 			_, err := fmt.Scan(&cmd)
 			if err != nil {
+				// todo: proper error message
 				panic(err)
 			}
 
@@ -204,6 +207,9 @@ func main() {
 					// todo: proper error message
 					panic(err)
 				}
+			case "t":
+				timing = !timing
+				fmt.Print("timing set to: ", timing)
 			case "d":
 				fmt.Print("\nEnter dataset numbers (1-40) (0 to break): ")
 
@@ -237,6 +243,7 @@ func main() {
 
 					var response string
 					if _, err := fmt.Scan(&response); err != nil {
+						// todo: proper error message
 						panic(err)
 					}
 
@@ -247,7 +254,7 @@ func main() {
 				}
 
 				run(timing, k, dataSets, imagesFromEachSet)
-				fmt.Println("\n###############################")
+				fmt.Print("\n###############################\n")
 			case "quit":
 				os.Exit(0)
 			}
