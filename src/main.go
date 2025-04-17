@@ -172,6 +172,8 @@ func main() {
 		}
 	}
 
+	// validate test image input
+
 	if len(dataSets) == 0 {
 		num1 := rand.Intn(40) + 1
 		num2 := rand.Intn(40) + 1
@@ -185,6 +187,13 @@ func main() {
 	if len(testImage) == 0 {
 		testImage = append(testImage, rand.Intn(40)+1)
 		testImage = append(testImage, rand.Intn(10)+1)
+	} else {
+		if testImage[0] < 1 || testImage[0] > 40 {
+			panic("incorrect set number")
+		}
+		if testImage[1] < 1 || testImage[1] > 10 {
+			panic("incorrect image number")
+		}
 	}
 
 	if !interactive {
