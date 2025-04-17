@@ -84,8 +84,8 @@ func ProjectFaces(faces []m.Matrix, eigenfaces, mean m.Matrix) ([]m.Matrix, erro
 }
 
 // todo: tests
-func LoadTestImage(eigenfaces, mean m.Matrix) (m.Matrix, error) {
-	testImage, err := image.LoadPgmImage("data/s20/10.pgm")
+func LoadTestImage(eigenfaces, mean m.Matrix, testImageParams []int) (m.Matrix, error) {
+	testImage, err := image.LoadPgmImage("data/s" + strconv.Itoa(testImageParams[0]) + "/" + strconv.Itoa(testImageParams[1]) + ".pgm")
 	if err != nil {
 		return m.Matrix{}, err
 	}

@@ -18,15 +18,16 @@ func help() {
 usage:
     ./face_recognition [options]
 
-Options:
+options:
     -h             shows this help message and terminates
-    -k <number>    sets the number of eigenfaces to use. Higher values will provide better accuracy. At the moment the default value is 9.
+    -k <num>       sets the number of eigenfaces to use. Higher values will provide better accuracy. At the moment the default value is 9.
     -t             display time taken to execute each step of the algorithm
-    -d <numbers>   Specify training datasets to use (e.g., 1,2,3). By default two random sets are used.
+    -s <num num>   specify the test image to be used. Given as tuple <number number> where the first number is the set being used (1-40) and the second number which image is used (1-10)		   
+    -d <num>       specify training datasets to use (e.g., 1,2,3). By default two random sets are used.
 
-Examples:
+examples:
     ./face_recognition                     # Run with default settings (k=9)
-    ./face_r"os/exec"ecognition -k 15               # Use 15 eigenfaces
+    ./face_r"os/exec"ecognition -k 15      # Use 15 eigenfaces
     ./face_recognition -d 1,2,3            # Use datasets 1, 2 and 3
     ./face_recognition -k 20 -d 1 2 3 4    # Use 20 eigenfaces with datasets 1-4
 	`)
@@ -47,7 +48,7 @@ func timeExecution(name string, timing bool, fn func() error) error {
 	return nil
 }
 
-func run(timing bool, k int, dataSets []int, imagesFromEachSet int) {
+func run(timing bool, dataSets, testImage []int, k, imagesFromEachSet int) {
 	var faces []m.Matrix
 	var eigenfaces, mean m.Matrix
 	var projectedFaces []m.Matrix
@@ -84,7 +85,7 @@ func run(timing bool, k int, dataSets []int, imagesFromEachSet int) {
 
 	if err := timeExecution("load test image", timing, func() error {
 		var err error
-		projectedTest, err = r.LoadTestImage(eigenfaces, mean)
+		projectedTest, err = r.LoadTestImage(eigenfaces, mean, testImage)
 		return err
 	}); err != nil {
 		log.Fatal(err)
@@ -103,7 +104,8 @@ func run(timing bool, k int, dataSets []int, imagesFromEachSet int) {
 	}
 
 	fmt.Println("Data used:", dataSets)
-	fmt.Println("closest match with:", matchIndex)
+	fmt.Println("Test Image: set", testImage[0], "| image", testImage[1])
+	fmt.Println("closest match with: set", matchIndex/10, "| image", matchIndex%10+1)
 	fmt.Printf("similarity: %.1f%% \n", similarity)
 }
 
@@ -115,6 +117,7 @@ func main() {
 	interactive := true
 	args := os.Args[1:]
 	var dataSets []int
+	var testImage []int
 
 	for i, flag := range args {
 		switch flag {
@@ -142,6 +145,17 @@ func main() {
 		case "-t":
 			timing = true
 			interactive = false
+		case "-s":
+			j := i + 1
+			for j < len(args) && !strings.HasPrefix(args[j], "-") {
+				value, err := strconv.Atoi(args[j])
+				if err != nil {
+					panic(err)
+				}
+				testImage = append(testImage, value)
+				j++
+			}
+			interactive = false
 		}
 	}
 
@@ -153,6 +167,11 @@ func main() {
 		}
 		dataSets = append(dataSets, num1)
 		dataSets = append(dataSets, num2)
+	}
+
+	if len(testImage) == 0 {
+		testImage = append(testImage, rand.Intn(40)+1)
+		testImage = append(testImage, rand.Intn(10)+1)
 	}
 
 	if !interactive {
@@ -174,19 +193,21 @@ func main() {
 			}
 		}
 
-		run(timing, k, dataSets, imagesFromEachSet)
+		run(timing, dataSets, testImage[:2], k, imagesFromEachSet)
 	} else {
 		for {
 			fmt.Println("\ncurrent settings:")
 			fmt.Println("-----------------------------------")
 			fmt.Println("  eigenfaces (k):        ", k)
 			fmt.Println("  data sets (d):         ", dataSets)
+			fmt.Println("  data sets (s):         ", testImage)
 			fmt.Println("  images per set:        ", imagesFromEachSet)
 			fmt.Println("  time algorithm steps:  ", timing)
 			fmt.Println("-----------------------------------")
 			fmt.Println("\navailable commands:")
 			fmt.Println("  k    - change number of eigenfaces")
 			fmt.Println("  d    - select data sets")
+			fmt.Println("  s    - select test image")
 			fmt.Println("  t    - toggle timing")
 			fmt.Println("  ?    - placeholder for now.")
 			fmt.Println("  run  - run the algoritm")
@@ -231,7 +252,38 @@ func main() {
 					newDataSets = append(newDataSets, val)
 				}
 				dataSets = newDataSets
+			case "s":
+				var newTestImage []int
 
+				fmt.Print("  enter set number (1-40) ")
+
+				for {
+					var set int
+					if _, err := fmt.Scan(&set); err != nil {
+						// todo: proper error message
+						panic(err)
+					}
+					if set >= 1 && set <= 40 {
+						newTestImage = append(newTestImage, set)
+						break
+					}
+					fmt.Println("  invalid set number")
+				}
+
+				fmt.Print("  enter image number (1-10) ")
+				for {
+					var num int
+					if _, err := fmt.Scan(&num); err != nil {
+						// todo: proper error message
+						panic(err)
+					}
+					if num >= 1 && num <= 10 {
+						newTestImage = append(newTestImage, num)
+						break
+					}
+					fmt.Println("  invalid number")
+				}
+				testImage = newTestImage
 			case "run":
 				if k < 0 || k > len(dataSets)*imagesFromEachSet {
 					fmt.Println("  invalid -k value. It must be positive and less than the size of the training data")
@@ -254,7 +306,7 @@ func main() {
 				}
 
 				fmt.Print("\n###############################\n\n")
-				run(timing, k, dataSets, imagesFromEachSet)
+				run(timing, dataSets, testImage[:2], k, imagesFromEachSet)
 				fmt.Print("\n###############################\n")
 			case "quit":
 				os.Exit(0)
