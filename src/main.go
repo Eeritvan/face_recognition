@@ -23,6 +23,7 @@ options:
     -k <num>       sets the number of eigenfaces to use. Higher values will provide better accuracy. At the moment the default value is 9.
     -t             display time taken to execute each step of the algorithm
     -s <num num>   specify the test image to be used. Given as tuple <number number> where the first number is the set being used (1-40) and the second number which image is used (1-10)		   
+    -i             specify how many images are loaded from each set.
     -d <num>       specify training datasets to use (e.g., 1,2,3). By default two random sets are used.
 
 examples:
@@ -145,6 +146,18 @@ func main() {
 		case "-t":
 			timing = true
 			interactive = false
+		case "-i":
+			num, err := strconv.Atoi(args[i+1])
+			if err != nil {
+				panic(err)
+			}
+			if num < 1 || num > 10 {
+				// todo: proper erroe message
+				panic("failed")
+			}
+
+			imagesFromEachSet = num
+			interactive = false
 		case "-s":
 			j := i + 1
 			for j < len(args) && !strings.HasPrefix(args[j], "-") {
@@ -209,7 +222,7 @@ func main() {
 			fmt.Println("  d    - select data sets")
 			fmt.Println("  s    - select test image")
 			fmt.Println("  t    - toggle timing")
-			fmt.Println("  ?    - placeholder for now.")
+			fmt.Println("  i    - specify amount of images to use from each set")
 			fmt.Println("  run  - run the algoritm")
 			fmt.Println("  quit - exit")
 
@@ -284,6 +297,21 @@ func main() {
 					fmt.Println("  invalid number")
 				}
 				testImage = newTestImage
+			case "i":
+				fmt.Print("  enter amount of images to use (1-10): ")
+
+				for {
+					var num int
+					if _, err := fmt.Scan(&num); err != nil {
+						// todo: proper error message
+						panic(err)
+					}
+					if num >= 1 && num <= 10 {
+						imagesFromEachSet = num
+						break
+					}
+					fmt.Println("  invalid number")
+				}
 			case "run":
 				if k < 0 || k > len(dataSets)*imagesFromEachSet {
 					fmt.Println("  invalid -k value. It must be positive and less than the size of the training data")
