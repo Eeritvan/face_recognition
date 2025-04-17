@@ -161,7 +161,7 @@ func main() {
 		}
 
 		if len(dataSets) > 4 {
-			fmt.Print("Loading many datasets may be super slow. Continue? (Y/n) ")
+			fmt.Print("loading many datasets may be super slow. Continue? (Y/n) ")
 
 			var response string
 			if _, err := fmt.Scan(&response); err != nil {
@@ -202,7 +202,7 @@ func main() {
 
 			switch cmd {
 			case "k":
-				fmt.Print("enter number of eigenfaces to use: ")
+				fmt.Print("  enter number of eigenfaces to use: ")
 				if _, err := fmt.Scan(&k); err != nil {
 					// todo: proper error message
 					panic(err)
@@ -211,7 +211,7 @@ func main() {
 				timing = !timing
 				fmt.Print("timing set to: ", timing)
 			case "d":
-				fmt.Print("\nEnter dataset numbers (1-40) (0 to break): ")
+				fmt.Print("  enter dataset numbers (1-40) (0 to break): ")
 
 				var newDataSets []int
 				for {
@@ -224,7 +224,7 @@ func main() {
 						break
 					}
 					if val < 1 || val > 40 {
-						fmt.Println("invalid number")
+						fmt.Println("  invalid number")
 						continue
 					}
 
@@ -234,12 +234,12 @@ func main() {
 
 			case "run":
 				if k < 0 || k > len(dataSets)*imagesFromEachSet {
-					fmt.Println("invalid -k value. It must be positive and less than the size of the training data")
+					fmt.Println("  invalid -k value. It must be positive and less than the size of the training data")
 					continue
 				}
 
 				if len(dataSets) > 4 {
-					fmt.Print("Loading many datasets may be super slow. I recommend using at most 4 sets. Continue? (Y/n) ")
+					fmt.Print("  loading many datasets may be super slow. I recommend using at most 4 sets. Continue? (Y/n) ")
 
 					var response string
 					if _, err := fmt.Scan(&response); err != nil {
@@ -253,6 +253,7 @@ func main() {
 					}
 				}
 
+				fmt.Print("\n###############################\n\n")
 				run(timing, k, dataSets, imagesFromEachSet)
 				fmt.Print("\n###############################\n")
 			case "quit":
