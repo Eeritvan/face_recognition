@@ -8,11 +8,10 @@ Eigenface-menetelmä toteutetaan aluksi valitsemalla jokin määrä harjoitusdat
 Tämä prosessi käytännössä vastaa pääkomponenttianalyysiä (PCA), jossa lasketaan ne pääkomponentit, jotka parhaiten kuvaavat datan varianssia. PCA auttaa siis tunnistamaan ne ominaispiirteet, jotka ovat merkityksellisimpiä kasvojentunnistuksen kannalta.
 
 ## aika vaativuudet
-- matriisitulo = O(n**3) 
+- matriisitulo = O(n**3)
 - QR-algoritmi = O(n**4)
 - Kuvien projektointi = O(m * k * b) 
 - lähimmän osuman etsiminen = O(k * n)
-#todo
 
 ## puutteet ja parannusehdotukset
 #todo
@@ -27,7 +26,6 @@ Olen käyttänyt claude 3.5 sonnet mallia keksimään joillekin muuttujille ja f
 - https://www.geeksforgeeks.org/ml-face-recognition-using-eigenfaces-pca-algorithm/
 - https://www.youtube.com/watch?v=n0zDgkbFyQk
 - https://www.youtube.com/watch?v=McHW221J3UM
-- https://stats.stackexchange.com/questions/53068/euclidean-distance-score-and-similarity
 
 data:
 - https://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html

@@ -1,7 +1,7 @@
 [![codecov](https://codecov.io/gh/Eeritvan/face_recognition/graph/badge.svg?token=VZZML0709G)](https://codecov.io/gh/Eeritvan/face_recognition)
 
 ## yksikkötestit
-Ohjelma sisältää testejä. Testit on sijoitettu koodin kanssa samoihin hakemistoihin.
+Testit on sijoitettu testattavan koodin kanssa samoihin hakemistoihin.
 
 Matriisioperaatioiden testit:
 - Kaikki matriisioperaatiot on todettu toimivaksi kokonaisluvuilla vertaamalla tulosta todelliseen vastaukseen
@@ -28,15 +28,18 @@ QR-algoritmin testit:
 - lähimmän kuvan ja euklidisen etäisyyden laskeva funktio todettu toimivaksi vertaamalla funktion palauttavia arvoja laskimella laskettuihin tiedettyihin tuloksiin. 
 - lähimmän kuvan ja euklidisen etäisyyden laskeva palauttaa etäisyyden 0 ja saman kuvan takaisin kun kuva löytyy jo harjoitusdatasta. 
 
+## integraatiotestit
+Sovellus testaa että algoritmi palauttaa oikeita tuloksia etukäteen validoilulla ja testatulla datalla. Testit esimerkiksi testaa, että jos testikuva on jo harjoitusdatassa kuva on 100% todennäköisyydellä kasvo. Testit myös testaa jos kuvaa ei ole datassa niin kuvan todennäköisyys olla kasvo on alle 100%. Testit myös testaa, että ohjelma osaa palauttaa oikean eniten samanlaisen kasvon takaisin.
+
 ## testien suorittaminen
-Testit voi suorittaa Go:n omalla testauskirjastolla. Sen pitäisi tulla Go:n asennuksen mukana joten sitä varten ei tarvitse ladata mitään. 
+Testit voi suorittaa Go:n omalla testauskirjastolla. Sen pitäisi tulla Go:n asennuksen mukana joten sitä varten ei tarvitse ladata mitään. Testit eivät testaa main tai cli paketteja sillä ne sisältävät lähinnä käyttöliittymän koodia joka eivät liity algoritmin toimintaan.
 
 ```bash
 cd src
-go test ./...
+go test $(cat testdirs.txt)
 
 ## testikattavuuden voi tulostaa: 
-go test ./... -cover
+go test $(cat testdirs.txt) -cover
 
 ## testikattavuuden ja testit voi myös tulostaa make avulla juurikansiosta: 
 make test
