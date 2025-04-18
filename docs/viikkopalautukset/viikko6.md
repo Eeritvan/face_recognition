@@ -1,0 +1,7 @@
+Tällä viikolla refaktoroin sovellusta ja paransin käyttöliittymää. Paransin myös testejä ja lisäsin sovellukseen integraatiotestin testaamaan algoritmin toimintaa kokonaisuutena. Nyt algoritmi ja ohjelma alkaa olemaan pääosin valmis ja toimii suhteellisen hyvin. Myös algoritmin kaikki osat on nyt melko hyvin testattu sekä dokumentoitu. Koodissa on vielä muutamia todo osioita ja kohtia joita täytyy tarkemmin tarkastella mutta vaikkei ne ikinä ehtisi valmiiksi niin sen ei pitäisi vaikuttaa lopputulokseen merkittävästi.
+
+Tällä viikolla suurempia haasteita ei ollut enkä oikeastaan oppinutkaan mitään uutta. En juurikaan työskennellyt suoranaisesti algoritmin parissa vaan hiostin muita alueita enemmän.
+
+Ennen loppupalautusta aion vielä hiukan parantaa koodia sisäisesti jotta sen olisi hiukan selkeämpi. Dokumentaatiota ehkä pystyisi vielä myös parantamaan vaikka se onkin jo ihan hyvällä mallilla. Myös joitakin integraatiotestejä tai e2e voisi miettiä lisää tai tutkia onko niiden toteuttamisesta mitään hyötyä. Jos jää paljon aikaa niin saatan tutkia pystyykö QR-algoritmia nopeuattaman jollakin tavalla sillä se on selkeästi algoritmia eniten hidastava osuus ja sen toiminta selkeästi hidastuu noin 40 kuvan treenausdatan jälkeen.
+
+Aikaa käytin tällä viikolla noin 12h.
