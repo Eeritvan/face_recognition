@@ -153,10 +153,8 @@ func timeExecution(name string, timing bool, fn func() error) error {
 	return nil
 }
 
-// todo: tests
 func Run(timing bool, dataSets, testImage []int, k, imagesFromEachSet int, rootDir string) (int, float64, error) {
 	if k < 0 || k > len(dataSets)*imagesFromEachSet {
-		// fmt.Println("invalid -k value. It must be positive and less than the size of the training data")
 		return 0, 0.0, errInvalidKValue
 	}
 
@@ -231,9 +229,4 @@ func Run(timing bool, dataSets, testImage []int, k, imagesFromEachSet int, rootD
 	}
 
 	return matchIndex, similarity, nil
-
-	// fmt.Println("Data used:", dataSets)
-	// fmt.Println("Test Image: set", testImage[0], "| image", testImage[1])
-	// fmt.Println("closest match with: set", matchIndex/10, "| image", matchIndex%10+1)
-	// fmt.Printf("similarity: %.1f%% \n", similarity)
 }

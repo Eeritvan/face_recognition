@@ -9,10 +9,6 @@ import (
 
 const EPSILON = 1e-6
 
-func TestLoadTrainingFaces(t *testing.T) {
-	// todo
-}
-
 func TestComputeEigenfaces(t *testing.T) {
 	tests := []struct {
 		name           string
@@ -174,10 +170,6 @@ func TestProjectFaces(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestLoadTestImage(t *testing.T) {
-	// todo
 }
 
 func TestFindClosestMatch(t *testing.T) {
