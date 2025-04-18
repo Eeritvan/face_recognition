@@ -56,7 +56,7 @@ func TestComputeEigenfaces(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			eigenfaces, mean, err := ComputeEigenfaces(tt.faces, tt.k)
+			eigenfaces, mean, err := computeEigenfaces(tt.faces, tt.k)
 			if err != tt.wantErr {
 				t.Errorf("ComputeEigenfaces(): returned wrong error: %v", err)
 			}
@@ -150,7 +150,7 @@ func TestProjectFaces(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			projectedFaces, err := ProjectFaces(tt.faces, tt.eigenfaces, tt.mean)
+			projectedFaces, err := projectFaces(tt.faces, tt.eigenfaces, tt.mean)
 			if err != tt.wantErr {
 				t.Errorf("ProjectFaces(): returned wrong error: %v", err)
 			}
@@ -251,7 +251,7 @@ func TestFindClosestMatch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			matchIndex, minDistance := FindClosestMatch(tt.projectedTest, tt.projectedFaces)
+			matchIndex, minDistance := findClosestMatch(tt.projectedTest, tt.projectedFaces)
 
 			if matchIndex != tt.wantMatchIndex {
 				t.Errorf("FindClosestMatch(): returned match index: %v, want %v", matchIndex, tt.wantMatchIndex)
@@ -294,7 +294,7 @@ func TestGetSimilarity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			similarity := GetSimilarity(tt.minDistance)
+			similarity := getSimilarity(tt.minDistance)
 
 			if math.Abs(similarity-tt.wantSimilarity) > EPSILON {
 				t.Errorf("GetSimilarity(): returned similarity: %v, want %v", similarity, tt.wantSimilarity)
