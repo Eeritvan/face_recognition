@@ -18,9 +18,9 @@ options:
     -h             shows this help message and terminates
     -k <num>       sets the number of eigenfaces to use. The default value is 9. This must be less than the amount of training images.
     -t             display time taken to execute each step of the algorithm
-    -s <num num>   specify the test	image to be used. Given as tuple <number number> where the first number is the set being used (1-40) and the second number which image is used (1-10)		   
-    -i             specify how many images are loaded from each set. Each set has 10 images.
-    -d <num>       specify training datasets to use (e.g., 1 2 3). By default two random sets are used.
+    -s <num num>   specify the test image to be used. Given as tuple <number number> where the first number is the set being used (1-40) and the second number which image is used (1-10)		   
+    -i <num>       specify how many images are loaded from each set. Each set has 10 images.
+    -d <num ...>   specify training datasets to use (e.g., 1 2 3). By default two random sets are used.
 
 note 1: Using too high a value for k can actually reduce accuracy due to overfitting and noise. Lower k values often generalize better.
 note 2: Using too many training images / sets will lead to slow performance. I recommend using less than 4 full data sets / 40 images in total.
