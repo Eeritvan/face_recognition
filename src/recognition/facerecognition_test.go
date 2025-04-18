@@ -161,10 +161,10 @@ func TestProjectFaces(t *testing.T) {
 
 			for idx := range projectedFaces {
 				if projectedFaces[idx].Rows != tt.wantProjectedFaces[idx].Rows {
-					t.Errorf("ProjectFaces(): mean returned incorrect amount of rows")
+					t.Errorf("ProjectFaces(): returned incorrect amount of rows")
 				}
 				if projectedFaces[idx].Cols != tt.wantProjectedFaces[idx].Cols {
-					t.Errorf("ProjectFaces(): mean returned incorrect amount of cols")
+					t.Errorf("ProjectFaces(): returned incorrect amount of cols")
 				}
 				for i := range projectedFaces[idx].Data {
 					if math.Abs(projectedFaces[idx].Data[i]-tt.wantProjectedFaces[idx].Data[i]) > EPSILON {
@@ -298,6 +298,75 @@ func TestGetSimilarity(t *testing.T) {
 
 			if math.Abs(similarity-tt.wantSimilarity) > EPSILON {
 				t.Errorf("GetSimilarity(): returned similarity: %v, want %v", similarity, tt.wantSimilarity)
+			}
+		})
+	}
+}
+
+func TestRun(t *testing.T) {
+	tests := []struct {
+		name              string
+		timing            bool
+		dataSets          []int
+		testImage         []int
+		k                 int
+		imagesFromEachSet int
+		rootDir           string
+		wantMatchIndex    int
+		wantSimilarity    float64
+		wantErr           error
+	}{
+		{
+			name:              "similarity is 100 if the image is in the training data",
+			timing:            false,
+			dataSets:          []int{1},
+			testImage:         []int{1, 1},
+			k:                 10,
+			imagesFromEachSet: 10,
+			rootDir:           "../",
+			wantMatchIndex:    1,
+			wantSimilarity:    100.0,
+			wantErr:           nil,
+		},
+		{
+			name:              "similarity is less than 100 if the image is not in the training data",
+			timing:            false,
+			dataSets:          []int{1, 2},
+			testImage:         []int{20, 10},
+			k:                 10,
+			imagesFromEachSet: 10,
+			rootDir:           "../",
+			wantMatchIndex:    12,
+			wantSimilarity:    76.82706,
+			wantErr:           nil,
+		},
+		{
+			name:              "Too high k value fails",
+			timing:            false,
+			dataSets:          []int{1, 2},
+			testImage:         []int{20, 10},
+			k:                 100,
+			imagesFromEachSet: 10,
+			rootDir:           "../",
+			wantMatchIndex:    0,
+			wantSimilarity:    0.0,
+			wantErr:           errInvalidKValue,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			matchIndex, similarity, err := Run(tt.timing, tt.dataSets, tt.testImage, tt.k, tt.imagesFromEachSet, tt.rootDir)
+			if err != tt.wantErr {
+				t.Errorf("Run(): returned wrong error: %v, want %v", err, tt.wantErr)
+			}
+
+			if matchIndex != tt.wantMatchIndex {
+				t.Errorf("Run(): returned incorrect matchindex: %v, want %v", matchIndex, tt.wantMatchIndex)
+			}
+
+			if math.Abs(similarity-tt.wantSimilarity) > EPSILON {
+				t.Errorf("Run(): returned incorrect similarity: %v, want %v", similarity, tt.wantSimilarity)
 			}
 		})
 	}

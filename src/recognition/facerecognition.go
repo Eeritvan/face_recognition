@@ -12,13 +12,18 @@ import (
 	"face_recognition/qr"
 )
 
-// todo: tests
-func loadTrainingFaces(dataSets []int, count int) ([]m.Matrix, error) {
+var (
+	errInvalidKValue   = fmt.Errorf("invalid -k value. It must be positive and less than the size of the training data")
+	errActionCancelled = fmt.Errorf("action cancelled")
+)
+
+// unit tests ignored. I/O testing wasn't required
+func loadTrainingFaces(dataSets []int, count int, rootDir string) ([]m.Matrix, error) {
 	var faces []m.Matrix
 
 	for _, set := range dataSets {
 		for i := range count {
-			matrix, err := image.LoadPgmImage("data/s" + strconv.Itoa(set) + "/" + strconv.Itoa(i+1) + ".pgm")
+			matrix, err := image.LoadPgmImage(rootDir + "data/s" + strconv.Itoa(set) + "/" + strconv.Itoa(i+1) + ".pgm")
 			if err != nil {
 				return nil, err
 			}
@@ -86,9 +91,9 @@ func projectFaces(faces []m.Matrix, eigenfaces, mean m.Matrix) ([]m.Matrix, erro
 	return projectedFaces, nil
 }
 
-// todo: tests
-func loadTestImage(eigenfaces, mean m.Matrix, testImageParams []int) (m.Matrix, error) {
-	testImage, err := image.LoadPgmImage("data/s" + strconv.Itoa(testImageParams[0]) + "/" + strconv.Itoa(testImageParams[1]) + ".pgm")
+// unit tests ignored. I/O testing wasn't required
+func loadTestImage(eigenfaces, mean m.Matrix, testImageParams []int, rootDir string) (m.Matrix, error) {
+	testImage, err := image.LoadPgmImage(rootDir + "data/s" + strconv.Itoa(testImageParams[0]) + "/" + strconv.Itoa(testImageParams[1]) + ".pgm")
 	if err != nil {
 		return m.Matrix{}, err
 	}
@@ -132,7 +137,7 @@ func getSimilarity(minDistance float64) float64 {
 	return max((1-(minDistance*0.04))*100.0, 0)
 }
 
-// todo: tests
+// tests ignored. Not relevant for the course or the program
 func timeExecution(name string, timing bool, fn func() error) error {
 	if !timing {
 		return fn()
@@ -149,10 +154,10 @@ func timeExecution(name string, timing bool, fn func() error) error {
 }
 
 // todo: tests
-func Run(timing bool, dataSets, testImage []int, k, imagesFromEachSet int) {
+func Run(timing bool, dataSets, testImage []int, k, imagesFromEachSet int, rootDir string) (int, float64, error) {
 	if k < 0 || k > len(dataSets)*imagesFromEachSet {
-		fmt.Println("invalid -k value. It must be positive and less than the size of the training data")
-		return
+		// fmt.Println("invalid -k value. It must be positive and less than the size of the training data")
+		return 0, 0.0, errInvalidKValue
 	}
 
 	if len(dataSets) > 4 {
@@ -164,7 +169,7 @@ func Run(timing bool, dataSets, testImage []int, k, imagesFromEachSet int) {
 		}
 
 		if response == "n" {
-			return
+			return 0, 0.0, errActionCancelled
 		}
 	}
 
@@ -183,7 +188,7 @@ func Run(timing bool, dataSets, testImage []int, k, imagesFromEachSet int) {
 
 	if err := timeExecution("process training images", timing, func() error {
 		var err error
-		faces, err = loadTrainingFaces(dataSets, imagesFromEachSet)
+		faces, err = loadTrainingFaces(dataSets, imagesFromEachSet, rootDir)
 		return err
 	}); err != nil {
 		log.Fatal(err)
@@ -207,7 +212,7 @@ func Run(timing bool, dataSets, testImage []int, k, imagesFromEachSet int) {
 
 	if err := timeExecution("load test image", timing, func() error {
 		var err error
-		projectedTest, err = loadTestImage(eigenfaces, mean, testImage)
+		projectedTest, err = loadTestImage(eigenfaces, mean, testImage, rootDir)
 		return err
 	}); err != nil {
 		log.Fatal(err)
@@ -225,8 +230,10 @@ func Run(timing bool, dataSets, testImage []int, k, imagesFromEachSet int) {
 		fmt.Print("Total time:", time.Since(totalStart), "\n\n")
 	}
 
-	fmt.Println("Data used:", dataSets)
-	fmt.Println("Test Image: set", testImage[0], "| image", testImage[1])
-	fmt.Println("closest match with: set", matchIndex/10, "| image", matchIndex%10+1)
-	fmt.Printf("similarity: %.1f%% \n", similarity)
+	return matchIndex, similarity, nil
+
+	// fmt.Println("Data used:", dataSets)
+	// fmt.Println("Test Image: set", testImage[0], "| image", testImage[1])
+	// fmt.Println("closest match with: set", matchIndex/10, "| image", matchIndex%10+1)
+	// fmt.Printf("similarity: %.1f%% \n", similarity)
 }

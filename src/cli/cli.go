@@ -128,7 +128,17 @@ func Interactive(dataSets, testImage []int, k, imagesFromEachSet int, timing boo
 			}
 		case "run":
 			fmt.Print("\n###############################\n\n")
-			r.Run(timing, dataSets, testImage[:2], k, imagesFromEachSet)
+			matchIndex, similarity, err := r.Run(timing, dataSets, testImage[:2], k, imagesFromEachSet, "./")
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+
+			fmt.Println("Data used:", dataSets)
+			fmt.Println("Test Image: set", testImage[0], "| image", testImage[1])
+			fmt.Println("closest match with: set", matchIndex/10, "| image", matchIndex%10+1)
+			fmt.Printf("similarity: %.1f%% \n", similarity)
+
 			fmt.Print("\n###############################\n")
 		case "quit":
 			os.Exit(0)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 	"os"
 	"strconv"
@@ -91,7 +92,7 @@ func main() {
 		dataSets = generateRandomDataset(dataSets)
 	}
 
-  // generate random test image to be used or validate given test image
+	// generate random test image to be used or validate given test image
 	if len(testImage) == 0 {
 		testImage = generateRandomTestImage()
 	} else {
@@ -103,9 +104,18 @@ func main() {
 		}
 	}
 
-  // decide to run in interactive mode or not
+	// decide to run in interactive mode or not
 	if !interactiveMode {
-		r.Run(timing, dataSets, testImage[:2], k, imagesFromEachSet)
+		matchIndex, similarity, err := r.Run(timing, dataSets, testImage[:2], k, imagesFromEachSet, "./")
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(0)
+		}
+
+		fmt.Println("Data used:", dataSets)
+		fmt.Println("Test Image: set", testImage[0], "| image", testImage[1])
+		fmt.Println("closest match with: set", matchIndex/10, "| image", matchIndex%10+1)
+		fmt.Printf("similarity: %.1f%% \n", similarity)
 	} else {
 		cli.Interactive(dataSets, testImage, k, imagesFromEachSet, timing)
 	}

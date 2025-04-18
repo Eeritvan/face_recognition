@@ -13,7 +13,7 @@ build:
 	$(GOBUILD) -C $(SRC_DIR) -o $(BINARY_NAME)
 
 test: build
-	$(GOTEST) -C $(SRC_DIR) ./... -cover
+	$(GOTEST) -C $(SRC_DIR) $(shell cat $(SRC_DIR)/testdirs.txt) -cover
 
 clean:
 	cd $(SRC_DIR) && rm -f $(BINARY_NAME)
