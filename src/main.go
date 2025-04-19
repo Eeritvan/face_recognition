@@ -112,9 +112,12 @@ func main() {
 			os.Exit(0)
 		}
 
+		matchDataSet := dataSets[(matchIndex-1)/imagesFromEachSet]
+		matchImgNum := (matchIndex-1)%imagesFromEachSet + 1
+
 		fmt.Println("Data used:", dataSets)
 		fmt.Println("Test Image: set", testImage[0], "| image", testImage[1])
-		fmt.Println("closest match with: set", matchIndex/10, "| image", matchIndex%10+1)
+		fmt.Println("closest match with: set", matchDataSet, "| image", matchImgNum)
 		fmt.Printf("similarity: %.1f%% \n", similarity)
 	} else {
 		cli.Interactive(dataSets, testImage, k, imagesFromEachSet, timing)

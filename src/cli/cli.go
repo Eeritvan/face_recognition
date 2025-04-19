@@ -141,9 +141,12 @@ func Interactive(dataSets, testImage []int, k, imagesFromEachSet int, timing boo
 				continue
 			}
 
+			matchDataSet := dataSets[(matchIndex-1)/imagesFromEachSet]
+			matchImgNum := (matchIndex-1)%imagesFromEachSet + 1
+
 			fmt.Println("Data used:", dataSets)
 			fmt.Println("Test Image: set", testImage[0], "| image", testImage[1])
-			fmt.Println("closest match with: set", matchIndex/10, "| image", matchIndex%10+1)
+			fmt.Println("closest match with: set", matchDataSet, "| image", matchImgNum)
 			fmt.Printf("similarity: %.1f%% \n", similarity)
 
 			fmt.Print("\n###############################\n")
