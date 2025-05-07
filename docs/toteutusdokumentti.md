@@ -9,9 +9,12 @@ Tämä prosessi käytännössä vastaa pääkomponenttianalyysiä (PCA), jossa l
 
 ## aika vaativuudet
 - matriisitulo = O(n**3)
-- QR-algoritmi = O(n**4)
+- QR-algoritmi = O(k * n**3)
 - Kuvien projektointi = O(m * k * b) 
 - lähimmän osuman etsiminen = O(k * n)
+
+n = koko
+k = eigenfaces
 
 ## puutteet ja parannusehdotukset
 #todo
