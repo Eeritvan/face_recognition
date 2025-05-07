@@ -41,7 +41,7 @@ func Interactive(dataSets, testImage []int, k, imagesFromEachSet int, timing boo
 		fmt.Println("-----------------------------------")
 		fmt.Println("  eigenfaces (k):        ", k)
 		fmt.Println("  data sets (d):         ", dataSets)
-		fmt.Println("  data sets (s):         ", testImage)
+		fmt.Println("  test image (s):        ", testImage)
 		fmt.Println("  images per set:        ", imagesFromEachSet)
 		fmt.Println("  time algorithm steps:  ", timing)
 		fmt.Println("-----------------------------------")
