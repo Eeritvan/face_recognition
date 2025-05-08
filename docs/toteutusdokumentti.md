@@ -13,9 +13,6 @@ Tämä prosessi käytännössä vastaa pääkomponenttianalyysiä (PCA), jossa l
 - Kuvien projektointi = O(m * k * b) 
 - lähimmän osuman etsiminen = O(k * n)
 
-n = koko
-k = eigenfaces
-
 ## puutteet ja parannusehdotukset
 #todo
 
