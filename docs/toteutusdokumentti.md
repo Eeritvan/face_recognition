@@ -13,6 +13,8 @@ Tämä prosessi käytännössä vastaa pääkomponenttianalyysiä (PCA), jossa l
 - Kuvien projektointi = O(m * k * b) 
 - lähimmän osuman etsiminen = O(k * n)
 
+#todo
+
 ## puutteet ja parannusehdotukset
 #todo
 

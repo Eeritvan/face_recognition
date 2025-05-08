@@ -235,7 +235,6 @@ func TestQR_Householder(t *testing.T) {
 			},
 			wantErr: nil,
 		},
-		// todo: testing some errors idk
 	}
 
 	for _, tt := range tests {
@@ -344,18 +343,6 @@ func TestQR_algorithm(t *testing.T) {
 			},
 			wantErr: nil,
 		},
-		// todo: fix needed for non-square matrices
-		// {
-		// 	name: "",
-		// 	A: m.Matrix{
-		// 		Rows: 3,
-		// 		Cols: 4,
-		// 		Data: []float64{4, 2, 0, 1, 2, 3, 5, 6, 7, 1, 2},
-		// 	},
-		// 	wantValues:  []float64{},
-		// 	wantVectors: m.Matrix{},
-		// 	wantErr:     nil,
-		// },
 	}
 
 	for _, tt := range tests {

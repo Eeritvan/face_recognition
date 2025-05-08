@@ -2,6 +2,7 @@ package matrix
 
 import (
 	"fmt"
+	"sort"
 )
 
 type Matrix struct {
@@ -151,20 +152,15 @@ func Covariance(A Matrix) (Matrix, error) {
 	return result, nil
 }
 
-// todo: explore possibility for faster sorting. Just relatively simple bubble sort for now.
 func SortEigenvectors(eigenvalues []float64, eigenvectors Matrix) Matrix {
 	indices := make([]int, len(eigenvalues))
 	for i := range indices {
 		indices[i] = i
 	}
 
-	for i := range len(indices) - 1 {
-		for j := i + 1; j < len(indices); j++ {
-			if eigenvalues[indices[i]] < eigenvalues[indices[j]] {
-				indices[i], indices[j] = indices[j], indices[i]
-			}
-		}
-	}
+	sort.Slice(indices, func(i, j int) bool {
+		return eigenvalues[indices[i]] > eigenvalues[indices[j]]
+	})
 
 	result := Matrix{
 		Rows: eigenvectors.Rows,
@@ -172,9 +168,9 @@ func SortEigenvectors(eigenvalues []float64, eigenvectors Matrix) Matrix {
 		Data: make([]float64, len(eigenvectors.Data)),
 	}
 
-	for value, idx := range indices {
-		for j := range eigenvectors.Rows {
-			result.Data[j*eigenvectors.Cols+value] = eigenvectors.Data[j*eigenvectors.Cols+idx]
+	for newCol, idx := range indices {
+		for row := range eigenvectors.Rows {
+			result.Data[row*eigenvectors.Cols+newCol] = eigenvectors.Data[row*eigenvectors.Cols+idx]
 		}
 	}
 
