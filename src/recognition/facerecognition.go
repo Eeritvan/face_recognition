@@ -80,6 +80,7 @@ func computeEigenfaces(faces []m.Matrix, k int) (m.Matrix, m.Matrix, error) {
 // Returns a slice of projected face matrices
 func projectFaces(faces []m.Matrix, eigenfaces, mean m.Matrix) ([]m.Matrix, error) {
 	projectedFaces := make([]m.Matrix, len(faces))
+	eigenfaces_T := m.Transpose(eigenfaces)
 
 	for i, face := range faces {
 		centeredFace, err := m.Subraction(face, mean)
@@ -87,7 +88,7 @@ func projectFaces(faces []m.Matrix, eigenfaces, mean m.Matrix) ([]m.Matrix, erro
 			return nil, err
 		}
 
-		projected, err := m.Multiplication(m.Transpose(eigenfaces), centeredFace)
+		projected, err := m.Multiplication(eigenfaces_T, centeredFace)
 		if err != nil {
 			return nil, err
 		}
