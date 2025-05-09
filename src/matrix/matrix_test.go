@@ -589,6 +589,20 @@ func TestCovariance(t *testing.T) {
 			},
 			wantErr: nil,
 		},
+		{
+			name: "output is correct with valid matrices",
+			A: Matrix{
+				Rows: 3,
+				Cols: 2,
+				Data: []float64{1.5, 2.2, 3.1, 0, 5, 0},
+			},
+			want: Matrix{
+				Rows: 2,
+				Cols: 2,
+				Data: []float64{36.86, 3.3, 3.3, 4.84},
+			},
+			wantErr: nil,
+		},
 	}
 
 	for _, tt := range tests {
