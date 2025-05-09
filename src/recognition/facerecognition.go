@@ -158,19 +158,6 @@ func Run(timing bool, dataSets, testImage []int, k, imagesFromEachSet int, rootD
 		return 0, 0.0, errInvalidKValue
 	}
 
-	if len(dataSets) > 4 {
-		fmt.Print("loading many datasets may be super slow. Continue? (Y/n) ")
-
-		var response string
-		if _, err := fmt.Scan(&response); err != nil {
-			panic(err)
-		}
-
-		if response == "n" {
-			return 0, 0.0, errActionCancelled
-		}
-	}
-
 	var (
 		faces          []m.Matrix
 		eigenfaces     m.Matrix

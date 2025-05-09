@@ -295,6 +295,7 @@ func TestGetSimilarity(t *testing.T) {
 	}
 }
 
+// integration test to ensure the main program works
 func TestRun(t *testing.T) {
 	tests := []struct {
 		name              string
@@ -343,6 +344,18 @@ func TestRun(t *testing.T) {
 			wantMatchIndex:    0,
 			wantSimilarity:    0.0,
 			wantErr:           errInvalidKValue,
+		},
+		{
+			name:              "works with many data sets (8)",
+			timing:            false,
+			dataSets:          []int{1, 2, 3, 4, 5, 6, 7, 8},
+			testImage:         []int{20, 2},
+			k:                 3,
+			imagesFromEachSet: 10,
+			rootDir:           "../",
+			wantMatchIndex:    38,
+			wantSimilarity:    43.1696864,
+			wantErr:           nil,
 		},
 	}
 
