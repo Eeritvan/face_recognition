@@ -2,6 +2,7 @@ package qr
 
 import (
 	"math"
+	"slices"
 	"testing"
 
 	m "face_recognition/matrix"
@@ -9,173 +10,202 @@ import (
 
 const EPSILON = 1e-6
 
-func TestHouseholderVector(t *testing.T) {
+func TestCalculateHouseholderVector(t *testing.T) {
 	tests := []struct {
-		name  string
-		input m.Matrix
-		col   int
-		n     int
-		want  []float64
+		name              string
+		R                 m.Matrix
+		colIdx            int
+		size              int
+		householderVector []float64
+		want              float64
+		wantErr           error
 	}{
 		{
 			name: "3x3 matrix column 0",
-			input: m.Matrix{
+			R: m.Matrix{
 				Rows: 3,
 				Cols: 3,
 				Data: []float64{
 					4, 1, -2,
-					1, 4, 1,
-					-2, 1, 4,
+					0, 3, 1,
+					0, 0, 2,
 				},
 			},
-			col:  0,
-			n:    3,
-			want: []float64{4 - math.Sqrt(21), 1, -2},
+			colIdx:            0,
+			size:              1,
+			householderVector: make([]float64, 1),
+			want:              0.03125,
+			wantErr:           nil,
 		},
 		{
 			name: "3x3 matrix column 1",
-			input: m.Matrix{
+			R: m.Matrix{
 				Rows: 3,
 				Cols: 3,
 				Data: []float64{
 					4, 1, -2,
-					1, 4, 1,
-					-2, 1, 4,
+					0, 3, 1,
+					0, 0, 2,
 				},
 			},
-			col:  1,
-			n:    3,
-			want: []float64{4 - math.Sqrt(17), 1},
+			colIdx:            1,
+			size:              2,
+			householderVector: make([]float64, 2),
+			want:              0.0555555,
+			wantErr:           nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := calculateHouseholderVector(tt.R, tt.colIdx, tt.size, tt.householderVector)
+			if err != tt.wantErr {
+				t.Errorf("calculateHouseholderVector(): returned incorrect error: %v, want %v", err, tt.wantErr)
+			}
+
+			if math.Abs(result-tt.want) > EPSILON {
+				t.Errorf("calculateHouseholderVector(): returned incorrect result: %v, want %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestUpdateRMatrix(t *testing.T) {
+	tests := []struct {
+		name              string
+		R                 m.Matrix
+		colIdx            int
+		size              int
+		householderVector []float64
+		beta              float64
+		want              m.Matrix
+	}{
+		{
+			name: "3x3 matrix first column",
+			R: m.Matrix{
+				Rows: 3,
+				Cols: 3,
+				Data: []float64{
+					4, 1, -2,
+					0, 3, 1,
+					0, 0, 2,
+				},
+			},
+			colIdx:            0,
+			size:              3,
+			householderVector: []float64{4, 0, 0},
+			beta:              0.125,
+			want: m.Matrix{
+				Rows: 3,
+				Cols: 3,
+				Data: []float64{
+					-4, -1, 2,
+					0, 3, 1,
+					0, 0, 2,
+				},
+			},
 		},
 		{
-			name: "3x3 matrix with negative column 0",
-			input: m.Matrix{
+			name: "3x3 matrix second column",
+			R: m.Matrix{
+				Rows: 3,
+				Cols: 3,
+				Data: []float64{
+					4, 1, -2,
+					0, 3, 1,
+					0, 0, 2,
+				},
+			},
+			colIdx:            1,
+			size:              2,
+			householderVector: []float64{3, 0},
+			beta:              0.2222222,
+			want: m.Matrix{
+				Rows: 3,
+				Cols: 3,
+				Data: []float64{
+					4, 1, -2,
+					0, -3, -1,
+					0, 0, 2,
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			Rcopy := m.Matrix{
+				Rows: tt.R.Rows,
+				Cols: tt.R.Cols,
+				Data: slices.Clone(tt.R.Data),
+			}
+			updateRMatrix(Rcopy, tt.colIdx, tt.size, slices.Clone(tt.householderVector), tt.beta)
+			for i := range Rcopy.Data {
+				if math.Abs(Rcopy.Data[i]-tt.want.Data[i]) > EPSILON {
+					t.Errorf("updateRMatrix(): at index %d, got %f, want %f", i, Rcopy.Data[i], tt.want.Data[i])
+				}
+			}
+		})
+	}
+}
+
+func TestUpdateQMatrix(t *testing.T) {
+	tests := []struct {
+		name              string
+		Q                 m.Matrix
+		colIdx            int
+		size              int
+		householderVector []float64
+		beta              float64
+		want              m.Matrix
+	}{
+		{
+			name: "3x3 matrix first column",
+			Q: m.Matrix{
+				Rows: 3,
+				Cols: 3,
+				Data: []float64{
+					4, 1, -2,
+					1, 3, 1,
+					2, 2, 2,
+				},
+			},
+			colIdx:            0,
+			size:              3,
+			householderVector: []float64{4, 0, 0},
+			beta:              0.125,
+			want: m.Matrix{
 				Rows: 3,
 				Cols: 3,
 				Data: []float64{
 					-4, 1, -2,
-					-1, 4, 1,
-					-2, 1, 4,
+					-1, 3, 1,
+					-2, 2, 2,
 				},
 			},
-			col:  0,
-			n:    3,
-			want: []float64{-4 + math.Sqrt(21), -1, -2},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := householderVector(tt.input, tt.col, tt.n)
-			if len(result) != len(tt.want) {
-				t.Errorf("householderVector(): length should be %d, got %d", len(tt.want), len(result))
-			}
-			for i := range result {
-				if math.Abs(result[i]-tt.want[i]) > 1e-10 {
-					t.Errorf("householderVector(): at index %d: got %f, want %f", i, result[i], tt.want[i])
-				}
-			}
-		})
-	}
-}
-
-func TestNormalizeVector(t *testing.T) {
-	tests := []struct {
-		name string
-		v    []float64
-		n    int
-		want []float64
-	}{
-		{
-			name: "3x1 vector",
-			v:    []float64{3, 4, 0},
-			n:    3,
-			want: []float64{0.6, 0.8, 0},
 		},
 		{
-			name: "2x1 vector",
-			v:    []float64{1, 1},
-			n:    2,
-			want: []float64{1 / math.Sqrt(2), 1 / math.Sqrt(2)},
-		},
-		{
-			name: "output is correct with zero vector",
-			v:    []float64{0, 0, 0},
-			n:    3,
-			want: []float64{0, 0, 0},
-		},
-		{
-			name: "vector with negative components works",
-			v:    []float64{-2, 2},
-			n:    2,
-			want: []float64{-1 / math.Sqrt(2), 1 / math.Sqrt(2)},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := normalizeVector(tt.v, tt.n)
-			if len(result) != len(tt.want) {
-				t.Errorf("normalizeVector(): length should be %d, got %d", len(tt.want), len(result))
-			}
-			for i := range result {
-				if math.Abs(result[i]-tt.want[i]) > EPSILON {
-					t.Errorf("normalizeVector(): at index %d: got %f, want %f", i, result[i], tt.want[i])
-				}
-			}
-		})
-	}
-}
-
-func TestHouseholderMatrix(t *testing.T) {
-	tests := []struct {
-		name string
-		u    []float64
-		k    int
-		n    int
-		want m.Matrix
-	}{
-		{
-			name: "3x3 matrix with k=0",
-			u:    []float64{1 / math.Sqrt(2), 1 / math.Sqrt(2), 0},
-			k:    0,
-			n:    3,
+			name: "3x3 matrix second column",
+			Q: m.Matrix{
+				Rows: 3,
+				Cols: 3,
+				Data: []float64{
+					4, 1, -2,
+					1, 3, 1,
+					2, 3, 2,
+				},
+			},
+			colIdx:            1,
+			size:              2,
+			householderVector: []float64{3, 0},
+			beta:              0.33333333,
 			want: m.Matrix{
 				Rows: 3,
 				Cols: 3,
 				Data: []float64{
-					0, -1, 0,
-					-1, 0, 0,
-					0, 0, 1,
-				},
-			},
-		},
-		{
-			name: "3x3 matrix with k=1",
-			u:    []float64{1 / math.Sqrt(2), 1 / math.Sqrt(2)},
-			k:    1,
-			n:    3,
-			want: m.Matrix{
-				Rows: 3,
-				Cols: 3,
-				Data: []float64{
-					1, 0, 0,
-					0, 0, -1,
-					0, -1, 0,
-				},
-			},
-		},
-		{
-			name: "2x2 matrix with k=0",
-			u:    []float64{1 / math.Sqrt(2), 1 / math.Sqrt(2)},
-			k:    0,
-			n:    2,
-			want: m.Matrix{
-				Rows: 2,
-				Cols: 2,
-				Data: []float64{
-					0, -1,
-					-1, 0,
+					4, -2, -2,
+					1, -6, 1,
+					2, -6, 2,
 				},
 			},
 		},
@@ -183,17 +213,15 @@ func TestHouseholderMatrix(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := householderMatrix(tt.u, tt.k, tt.n)
-			if result.Cols != tt.want.Cols {
-				t.Errorf("householderMatrix(): returned incorrect amount of cols")
+			Rcopy := m.Matrix{
+				Rows: tt.Q.Rows,
+				Cols: tt.Q.Cols,
+				Data: slices.Clone(tt.Q.Data),
 			}
-			if result.Rows != tt.want.Rows {
-				t.Errorf("householderMatrix(): returned incorrect amount of rows")
-			}
-			for i := range result.Data {
-				if math.Abs(result.Data[i]-tt.want.Data[i]) > EPSILON {
-					t.Errorf("householderMatrix(): at index %d: got %f, want %f",
-						i, result.Data[i], tt.want.Data[i])
+			updateQMatrix(Rcopy, tt.colIdx, tt.size, slices.Clone(tt.householderVector), tt.beta)
+			for i := range Rcopy.Data {
+				if math.Abs(Rcopy.Data[i]-tt.want.Data[i]) > EPSILON {
+					t.Errorf("updateRMatrix(): at index %d, got %f, want %f", i, Rcopy.Data[i], tt.want.Data[i])
 				}
 			}
 		})
@@ -219,18 +247,18 @@ func TestQR_Householder(t *testing.T) {
 				Rows: 3,
 				Cols: 3,
 				Data: []float64{
-					0.872871, 0.395318, -0.286038,
-					0.218217, 0.208062, 0.953462,
-					0.436435, -0.894669, 0.095346,
+					-0.872871, -0.395318, 0.286038,
+					-0.218217, -0.208062, -0.953462,
+					-0.436435, 0.894669, -0.095346,
 				},
 			},
 			wantR: m.Matrix{
 				Rows: 3,
 				Cols: 3,
 				Data: []float64{
-					4.582575, 4.364357, 1.527525,
-					0, -4.577377, -1.165150,
-					0, 0, 3.051080,
+					-4.582575, -4.364357, -1.527525,
+					0, 4.577377, 1.165150,
+					0, 0, -3.051080,
 				},
 			},
 			wantErr: nil,
@@ -317,9 +345,9 @@ func TestQR_algorithm(t *testing.T) {
 				Rows: 3,
 				Cols: 3,
 				Data: []float64{
-					0.120580, 0.959658, -0.254000,
-					0.361740, -0.280751, -0.889000,
-					0.924448, -0.015313, 0.381000,
+					0.120580, -0.959658, -0.254000,
+					0.361740, 0.280751, -0.889000,
+					0.924448, 0.015313, 0.381000,
 				},
 			},
 			wantErr: nil,

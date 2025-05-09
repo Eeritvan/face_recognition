@@ -24,6 +24,7 @@ Olen käyttänyt claude 3.5 sonnet mallia keksimään joillekin muuttujille ja f
 ## lähteet
 - https://en.wikipedia.org/wiki/Eigenface
 - https://en.wikipedia.org/wiki/QR_algorithm
+https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections
 - https://km.pcz.pl/konferencja/dokumenty/MMFT2017/Caban%20L.pdf
 - https://www.geeksforgeeks.org/ml-face-recognition-using-eigenfaces-pca-algorithm/
 - https://www.youtube.com/watch?v=n0zDgkbFyQk

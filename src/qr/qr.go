@@ -7,79 +7,82 @@ import (
 	m "face_recognition/matrix"
 )
 
-func householderVector(R m.Matrix, col, n int) []float64 {
-	reflVector := make([]float64, n-col)
-	vectorNorm := 0.0
-	for i := col; i < n; i++ {
-		reflVector[i-col] = R.Data[i*n+col]
-		vectorNorm += R.Data[i*n+col] * R.Data[i*n+col]
+// note: gemini 2.5 pro helped me optimize and make the Householder reflection and QR way faster
+
+func calculateHouseholderVector(R m.Matrix, colIdx, size int, householderVector []float64) (float64, error) {
+	norm := 0.0
+	for i := range size {
+		val := R.Data[(colIdx+i)*R.Cols+colIdx]
+		householderVector[i] = val
+		norm += val * val
 	}
 
-	vectorNorm = math.Sqrt(vectorNorm)
-	if reflVector[0] > 0 {
-		vectorNorm = -vectorNorm
+	norm = math.Sqrt(norm)
+
+	if householderVector[0] >= 0 {
+		householderVector[0] += norm
+	} else {
+		householderVector[0] -= norm
 	}
 
-	reflVector[0] = reflVector[0] + vectorNorm
-	return reflVector
+	norm_sq := 0.0
+	for i := range size {
+		norm_sq += householderVector[i] * householderVector[i]
+	}
+
+	return 2.0 / norm_sq, nil
 }
 
-func normalizeVector(vector []float64, dimension int) []float64 {
-	normVector := make([]float64, dimension)
-	copy(normVector, vector)
-
-	length := 0.0
-	for j := range normVector {
-		length += normVector[j] * normVector[j]
-	}
-	length = math.Sqrt(length)
-
-	if math.Abs(length) < 1e-10 {
-		return normVector
-	}
-
-	for j := range normVector {
-		normVector[j] /= length
-	}
-	return normVector
-}
-
-func householderMatrix(u []float64, startIdx, dimension int) m.Matrix {
-	reflMatrix := m.Identity(dimension)
-	for i := startIdx; i < dimension; i++ {
-		for j := startIdx; j < dimension; j++ {
-			reflMatrix.Data[i*dimension+j] -= 2 * u[i-startIdx] * u[j-startIdx]
+func updateRMatrix(R m.Matrix, colIdx, size int, householderVector []float64, beta float64) {
+	for col := colIdx; col < R.Cols; col++ {
+		dotProduct := 0.0
+		for i := range size {
+			dotProduct += householderVector[i] * R.Data[(colIdx+i)*R.Cols+col]
+		}
+		scaledProduct := dotProduct * beta
+		for i := range size {
+			R.Data[(colIdx+i)*R.Cols+col] -= scaledProduct * householderVector[i]
 		}
 	}
-	return reflMatrix
+}
+
+func updateQMatrix(Q m.Matrix, colIdx, size int, householderVector []float64, beta float64) {
+	for rowIndex := range Q.Rows {
+		dotProduct := 0.0
+		for i := range size {
+			dotProduct += Q.Data[rowIndex*Q.Rows+(colIdx+i)] * householderVector[i]
+		}
+		scaledProduct := dotProduct * beta
+		for i := range size {
+			Q.Data[rowIndex*Q.Rows+(colIdx+i)] -= scaledProduct * householderVector[i]
+		}
+	}
 }
 
 func qr_Householder(A m.Matrix) (m.Matrix, m.Matrix, error) {
-	dimension := A.Rows
+	rows := A.Rows
+	cols := A.Cols
 
-	Q := m.Identity(dimension)
+	Q := m.Identity(rows)
 	R := m.Matrix{
-		Rows: A.Rows,
-		Cols: A.Cols,
+		Rows: rows,
+		Cols: cols,
 		Data: slices.Clone(A.Data),
 	}
-	for columnIdx := range dimension - 1 {
-		reflVector := householderVector(R, columnIdx, dimension)
-		unitVector := normalizeVector(reflVector, dimension)
-		reflMatrix := householderMatrix(unitVector, columnIdx, dimension)
 
-		newR, err := m.Multiplication(reflMatrix, R)
+	householderStorage := make([]float64, rows)
+
+	for colIdx := range cols {
+		size := rows - colIdx
+		householderVector := householderStorage[:size]
+
+		beta, err := calculateHouseholderVector(R, colIdx, size, householderVector)
 		if err != nil {
 			return m.Matrix{}, m.Matrix{}, err
 		}
-		R = newR
 
-		reflMatrix_T := m.Transpose(reflMatrix)
-		newQ, err := m.Multiplication(Q, reflMatrix_T)
-		if err != nil {
-			return m.Matrix{}, m.Matrix{}, err
-		}
-		Q = newQ
+		updateRMatrix(R, colIdx, size, householderVector, beta)
+		updateQMatrix(Q, colIdx, size, householderVector, beta)
 	}
 	return Q, R, nil
 }
@@ -93,7 +96,7 @@ func QR_algorithm(A m.Matrix) ([]float64, m.Matrix, error) {
 
 	eigenvectorMatrix := m.Identity(A.Rows)
 
-	for {
+	for range 1000 {
 		Q, R, err := qr_Householder(currentMatrix)
 		if err != nil {
 			return nil, m.Matrix{}, err
@@ -121,6 +124,13 @@ func QR_algorithm(A m.Matrix) ([]float64, m.Matrix, error) {
 
 		currentMatrix = nextMatrix
 	}
+
+	n := A.Rows
+	eigenValues := make([]float64, n)
+	for i := range n {
+		eigenValues[i] = currentMatrix.Data[i*currentMatrix.Cols+i]
+	}
+	return eigenValues, eigenvectorMatrix, nil
 }
 
 func hasConverged(prev, curr m.Matrix) bool {
