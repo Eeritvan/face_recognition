@@ -32,6 +32,7 @@ Sovellusta pystyy käyttämään kahdella tavalla:
 
 
 ### suoraan komentoriviltä
+argumentit näkee alhaalta.
 ```bash
 #Käyttämällä make juurikansiosta:
 make ARGS="..."
@@ -53,17 +54,21 @@ go run .
 ```
 
 ## toiminnot
-#todo
+ohjelmassa voi asettaa joitakin asetuksia kuten:
+- valita mitä kuva settejä käytetään treenausdatana. Liian paljon treenausdataa ei kuitenkaan paranna tulosta vaan voi johtaa ylimääräisen kohinan tai turhien yksityiskohtien ylikorostumiseen.
+- säätää eigenfaces määrä joka käytännössä tarkoittaa kuinka paljon yksityiskohtia jokaisesta treenaisdatan kuvasta säilytetään. Yleensä pienemmät arvot antavat parempia tuloksia, sillä suuremmilla arvoilla kohina ja turhat yksityiskohdat voi ylikorostua
+- valita mitä kuvaa käytetään testidatana ja jota verrataan treenausdataan
+- valita kuinka monta harjoituskuvaa jokaisesta treenausdatan setistä valitaan.
 
-#### Argumentit:
+#### Argumentit komentorivi tilalle:
 Kaikki toiminnot myös ohjelmassa näkee käyttämällä "-h" argumenttia.
 
 - `-h` näyttää terminaalissa kaikki asetukset, vaihtoehdot ja esimerkkejä
 - `-t` näyttää kuinka kauan algoritmissä kestää eri vaiheiden suorittamiseen
-- `-k <num>` antaa valita kuinka monta eigenface kuvaa algoritmi käyttää. Vakioasetus on 9 
+- `-k <num>` antaa valita kuinka monta eigenface kuvaa algoritmi käyttää. Vakioasetus on 5
 - `-s <num num>` antaa valita testattavan kuvan itse. Ensimmäinen numero valitsee setin / henkilön (1-40) ja toinen numero mitä kuvaa setistä käytetään (1-10). Vakiona ohjelma ohjelma arpoo jonkin kuvan.
 - `-d <num ...>` antaa valita käytettävän treenausdatan setit (esim. 1 2 5). Vakiona ohjelma arpoo kaksi settiä joita algoritmi käyttää.
 - `-i <num>` antaa valita ladattavien kuvien määrän jokaisesta datasetitstä joissa jokaisessa on 10 kuvaa. i voi olla 1-10. Oletuksena i on 10 eli kaikki kuvat käytetään.
 
 > huom!<br>
-> käytettävien kuvien määrä kannattaa olla 4 tai vähemmän sillä algoritmi on muuten todella hidas
+> käytettävien kuvien määrä kannattaa olla enintään 15 sillä algoritmi on muuten melko hidas
