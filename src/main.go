@@ -28,7 +28,7 @@ func generateRandomTestImage() []int {
 }
 
 func main() {
-	k := 9
+	k := 5
 	imagesFromEachSet := 10
 	timing := false
 	interactiveMode := true

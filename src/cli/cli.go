@@ -11,27 +11,27 @@ func Help() {
 	fmt.Println(`
 usage:
     ./face_recognition [options]
-
-	./face_recognition     # without any options this will use interactive cli mode
+    ./face_recognition     # without any options this will use interactive cli mode
 
 options:
     -h             shows this help message and terminates
-    -k <num>       sets the number of eigenfaces to use. The default value is 9. This must be less than the amount of training images.
+    -k <num>       sets the number of eigenfaces to use. The default value is 5.
     -t             display time taken to execute each step of the algorithm
     -s <num num>   specify the test image to be used. Given as tuple <number number> where the first number is the set being used (1-40) and the second number which image is used (1-10)		   
     -i <num>       specify how many images are loaded from each set. Each set has 10 images.
     -d <num ...>   specify training datasets to use (e.g., 1 2 3). By default two random sets are used.
 
-note 1: Using too high a value for k can actually reduce accuracy due to overfitting and noise. Lower k values often generalize better.
-note 2: Using too many training images / sets will lead to slow performance. I recommend using less than 4 full data sets / 40 images in total.
+note 1: Using too high a value for k can reduce accuracy due to overfitting and noise. Lower k values often generalize better.
+note 2: Using too many training images / sets will lead to slow performance. I recommend using less than 10 full data sets / 100 images in total.
+note 3: Too many training images can lead to reduced accuracy due to added noice. With many training images I recommend using low k value such as 2 or 3.
 	
 examples:
     ./face_recognition                     # Run interactive mode 
-    ./face_recognition -k 15   	           # Use 15 eigenfaces
+    ./face_recognition -t                  # Display the time taken by different steps of the algorithm
+    ./face_recognition -k 8                # Use 8 eigenfaces
     ./face_recognition -d 1 2 3            # Use datasets 1, 2 and 3
     ./face_recognition -s 5 5              # Use set 5 image 5 as the test image
-    ./face_recognition -k 15 -d 1 2 3 4    # Use 20 eigenfaces with datasets 1-4
-
+    ./face_recognition -k 8 -d 1 2 3 4 5   # Use 8 eigenfaces with datasets 1-5
 	`)
 }
 
