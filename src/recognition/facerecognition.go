@@ -12,12 +12,14 @@ import (
 	"face_recognition/qr"
 )
 
+// define possible errors
 var (
-	errInvalidKValue   = fmt.Errorf("invalid -k value. It must be positive and less than the size of the training data")
-	errActionCancelled = fmt.Errorf("action cancelled")
+	errInvalidKValue = fmt.Errorf("invalid -k value. It must be positive and less than the size of the training data")
 )
 
-// unit tests ignored. I/O testing wasn't required
+// unit tests ignored since I/O testing wasn't required
+// loads and flattens training images from the data directory for the specified sets and image count per set.
+// Returns a slice of matrices containing the images
 func loadTrainingFaces(dataSets []int, count int, rootDir string) ([]m.Matrix, error) {
 	var faces []m.Matrix
 
@@ -35,6 +37,8 @@ func loadTrainingFaces(dataSets []int, count int, rootDir string) ([]m.Matrix, e
 	return faces, nil
 }
 
+// calculates the eigenfaces and mean face from the training data
+// Returns the eigenfaces matrix and the mean matrix
 func computeEigenfaces(faces []m.Matrix, k int) (m.Matrix, m.Matrix, error) {
 	mean, err := image.MeanOfImages(faces)
 	if err != nil {
@@ -72,6 +76,8 @@ func computeEigenfaces(faces []m.Matrix, k int) (m.Matrix, m.Matrix, error) {
 	return eigenfaces, mean, nil
 }
 
+// projects all training faces into the eigenspace defined by eigenfaces and mean
+// Returns a slice of projected face matrices
 func projectFaces(faces []m.Matrix, eigenfaces, mean m.Matrix) ([]m.Matrix, error) {
 	projectedFaces := make([]m.Matrix, len(faces))
 
@@ -91,7 +97,9 @@ func projectFaces(faces []m.Matrix, eigenfaces, mean m.Matrix) ([]m.Matrix, erro
 	return projectedFaces, nil
 }
 
-// unit tests ignored. I/O testing wasn't required
+// unit tests ignored since I/O testing wasn't required
+// loads and projects a test image into the eigenspace using the given eigenfaces and mean
+// Returns the projected test image matrix
 func loadTestImage(eigenfaces, mean m.Matrix, testImageParams []int, rootDir string) (m.Matrix, error) {
 	testImage, err := image.LoadPgmImage(rootDir + "data/s" + strconv.Itoa(testImageParams[0]) + "/" + strconv.Itoa(testImageParams[1]) + ".pgm")
 	if err != nil {
@@ -112,6 +120,8 @@ func loadTestImage(eigenfaces, mean m.Matrix, testImageParams []int, rootDir str
 	return projectedTest, nil
 }
 
+// findClosestMatch finds the closest training face to the projected test image
+// Returns the index of the closest match and the minimum distance
 func findClosestMatch(projectedTest m.Matrix, projectedFaces []m.Matrix) (int, float64) {
 	var minDistance float64 = math.Inf(1)
 	matchIndex := -1
@@ -133,11 +143,13 @@ func findClosestMatch(projectedTest m.Matrix, projectedFaces []m.Matrix) (int, f
 	return matchIndex + 1, minDistance
 }
 
+// converts the minimum distance to a similarity percentage (0-100) using a function (1 - 0.04x) * 100
 func getSimilarity(minDistance float64) float64 {
 	return max((1-(minDistance*0.04))*100.0, 0)
 }
 
 // tests ignored. Not relevant for the course or the program
+// measures time if timing flag is enabled
 func timeExecution(name string, timing bool, fn func() error) error {
 	if !timing {
 		return fn()
@@ -153,6 +165,9 @@ func timeExecution(name string, timing bool, fn func() error) error {
 	return nil
 }
 
+// executes the full face recognition pipeline
+// loads training images, computes eigenfaces, projects faces, loads and projects test image
+// finds the closest match, and returns the match index and similarity or a possible error
 func Run(timing bool, dataSets, testImage []int, k, imagesFromEachSet int, rootDir string) (int, float64, error) {
 	if k < 0 || k > len(dataSets)*imagesFromEachSet {
 		return 0, 0.0, errInvalidKValue

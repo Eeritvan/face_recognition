@@ -7,6 +7,7 @@ import (
 	r "face_recognition/recognition"
 )
 
+// prints usage instructions and available command-line options for the program.
 func Help() {
 	fmt.Println(`
 usage:
@@ -35,6 +36,9 @@ examples:
 	`)
 }
 
+// provides an interactive CLI for configuring and running face recognition program
+// users can change parameters, select datasets, test images, and run the algorithm
+// the function is an infinite loop until cmd "quit" is given
 func Interactive(dataSets, testImage []int, k, imagesFromEachSet int, timing bool) {
 	for {
 		fmt.Println("\ncurrent settings:")
@@ -61,15 +65,15 @@ func Interactive(dataSets, testImage []int, k, imagesFromEachSet int, timing boo
 		}
 
 		switch cmd {
-		case "k":
+		case "k": // eigenfaces to use
 			fmt.Print("  enter number of eigenfaces to use: ")
 			if _, err := fmt.Scan(&k); err != nil {
 				panic(err)
 			}
-		case "t":
+		case "t": // toggle timing
 			timing = !timing
 			fmt.Print("timing set to: ", timing)
-		case "d":
+		case "d": // select data sets
 			fmt.Print("  enter datasets to use (1-40) (0 to break): ")
 
 			var newDataSets []int
@@ -89,7 +93,7 @@ func Interactive(dataSets, testImage []int, k, imagesFromEachSet int, timing boo
 				newDataSets = append(newDataSets, val)
 			}
 			dataSets = newDataSets
-		case "s":
+		case "s": // select test image
 			var newTestImage []int
 
 			fmt.Print("  enter set number (1-40) ")
@@ -119,7 +123,7 @@ func Interactive(dataSets, testImage []int, k, imagesFromEachSet int, timing boo
 				fmt.Println("  invalid number")
 			}
 			testImage = newTestImage
-		case "i":
+		case "i": // select how many images are loaded from each set
 			fmt.Print("  enter amount of images to use (1-10): ")
 
 			for {
@@ -133,7 +137,7 @@ func Interactive(dataSets, testImage []int, k, imagesFromEachSet int, timing boo
 				}
 				fmt.Println("  invalid number")
 			}
-		case "run":
+		case "run": // run the algoritm and print out results
 			fmt.Print("\n###############################\n\n")
 			matchIndex, similarity, err := r.Run(timing, dataSets, testImage[:2], k, imagesFromEachSet, "./")
 			if err != nil {

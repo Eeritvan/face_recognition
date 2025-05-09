@@ -11,6 +11,8 @@ import (
 	r "face_recognition/recognition"
 )
 
+// generates two random sets to be used
+// returns an array of two integers representing the numbers of the data sets
 func generateRandomDataset(dataSets []int) []int {
 	num1 := rand.Intn(40) + 1
 	num2 := rand.Intn(40) + 1
@@ -23,6 +25,7 @@ func generateRandomDataset(dataSets []int) []int {
 	return dataSets
 }
 
+// generate random test image. First number is the set and the second number is the image from the set
 func generateRandomTestImage() []int {
 	return []int{rand.Intn(40) + 1, rand.Intn(10) + 1}
 }
@@ -36,6 +39,7 @@ func main() {
 	var dataSets []int
 	var testImage []int
 
+	// check for given arguments
 	for i, flag := range args {
 		switch flag {
 		case "-h":
@@ -87,7 +91,7 @@ func main() {
 		}
 	}
 
-	// generate random data to be used
+	// generate random data to be used if no data sets were given
 	if len(dataSets) == 0 {
 		dataSets = generateRandomDataset(dataSets)
 	}

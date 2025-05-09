@@ -11,12 +11,16 @@ import (
 	m "face_recognition/matrix"
 )
 
+// define possible errors
 var (
 	errFileOpening   = fmt.Errorf("error opening file")
 	errFileReading   = fmt.Errorf("error reading file")
 	errWrongFaceSize = fmt.Errorf("size of the face was incorrect")
 )
 
+// reads a PGM image file from data directory and converts it to a matrix
+// the function reads the dimensions, and pixel data
+// returns a pointer to Matrix containing the image data
 func LoadPgmImage(filepath string) (*m.Matrix, error) {
 	file, err := os.Open(filepath)
 	if err != nil {
@@ -26,6 +30,7 @@ func LoadPgmImage(filepath string) (*m.Matrix, error) {
 
 	reader := bufio.NewReader(file)
 
+	// skip the "p5"" header
 	_, err = reader.ReadString('\n')
 	if err != nil {
 		return nil, errFileReading
@@ -45,6 +50,7 @@ func LoadPgmImage(filepath string) (*m.Matrix, error) {
 		return nil, errFileReading
 	}
 
+	// skip color information
 	_, err = reader.ReadString('\n')
 	if err != nil {
 		return nil, errFileReading
@@ -72,16 +78,20 @@ func LoadPgmImage(filepath string) (*m.Matrix, error) {
 	return matrix, nil
 }
 
-func FlattenImage(img m.Matrix) m.Matrix {
+// converts a 2D image matrix into a 1D column vector
+func FlattenImage(image m.Matrix) m.Matrix {
 	result := m.Matrix{
-		Rows: img.Rows * img.Cols,
+		Rows: image.Rows * image.Cols,
 		Cols: 1,
-		Data: img.Data,
+		Data: image.Data,
 	}
 
 	return result
 }
 
+// calculates the average face from a slice of face matrices
+// all input faces must have the same dimensions
+// returns a matrix representing the mean face
 func MeanOfImages(faces []m.Matrix) (m.Matrix, error) {
 	result := m.Matrix{
 		Rows: faces[0].Rows,
