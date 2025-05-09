@@ -19,7 +19,7 @@ Tämä prosessi käytännössä vastaa pääkomponenttianalyysiä (PCA), jossa l
 #todo
 
 ## AI käyttö
-Olen käyttänyt claude 3.5 sonnet mallia keksimään joillekin muuttujille ja funktioille parempia nimiä
+Käytin claude 3.5 sonnet mallia keksimään joillekin muuttujille ja funktioille parempia nimiä sekä kirjoittamaan joillekin funktioille parempia kommentteja. Käytin myös gemini 2.5 pro mallia optimoimaan ja tehostamaan QR-algoritmia ja Householderin reflektiota kurssin lopussa.
 
 ## lähteet
 - https://en.wikipedia.org/wiki/Eigenface
